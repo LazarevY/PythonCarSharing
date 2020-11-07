@@ -5,6 +5,15 @@
     <title>Model Edit</title>
 </head>
 <body>
+{% with messages = get_flashed_messages() %}
+  {% if messages %}
+    <ul class=flashes>
+    {% for message in messages %}
+      <li>{{ message }}</li>
+    {% endfor %}
+    </ul>
+  {% endif %}
+{% endwith %}
 <form action="{{ url_for('model_action') }}" name="model_edit_form" method="post">
     {{ model_form.hidden_tag() }}
     {% if model_form.errors %}
@@ -18,6 +27,10 @@
         {{ model_form.model_name }}
     </p>
     <p>
+        {{ model_form.categories.label }}
+        {{ model_form.categories() }}
+    </p>
+    <p>
         {{ model_form.brand_name.label }}
         {{ model_form.brand_name() }}
     </p>
@@ -28,7 +41,9 @@
     <p>
         {{ model_form.model_submit }}
         {{ model_form.view_models }}
+        {{ model_form.delete_submit }}
     </p>
+
 </form>
 
 <form action="{{ url_for('brand_action') }}" name="brand_edit_form" method="POST">
