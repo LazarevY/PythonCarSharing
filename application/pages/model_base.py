@@ -4,8 +4,8 @@ import app_context as a
 from application.database.modeles.auto_brand import AutoBrand
 from application.database.modeles.auto_model import AutoModel
 from application.database.modeles.drive_category import DriveCategory
-from application.front.forms.brand_form import BrandForm
-from application.front.forms.model_form import ModelForm
+from application.pages.forms.brand_form import BrandForm
+from application.pages.forms.model_form import ModelForm
 
 app = a.app()
 brands_backup = []

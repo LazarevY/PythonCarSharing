@@ -32,7 +32,7 @@
     </p>
     <p>
         {{ model_form.brand_name.label }}
-        {{ model_form.brand_name() }}
+        {{ model_form.brand_name(**{"onchange":"this.form.view.click()"}) }}
     </p>
     <p>
         {{ model_form.models.label }}
@@ -40,7 +40,7 @@
     </p>
     <p>
         {{ model_form.model_submit }}
-        {{ model_form.view_models }}
+        {{ model_form.view_models(id='view', hidden='true') }}
         {{ model_form.delete_submit }}
     </p>
 

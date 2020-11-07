@@ -1,5 +1,5 @@
 import app_context
-import application.front.front
+import application.pages.front
 
 flask_app = app_context.app()
 
