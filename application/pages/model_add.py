@@ -24,42 +24,42 @@ def add_brand(form: BrandForm):
     a.db().add_entity_object(AutoBrand(brand_name=brand))
     a.db().commit_session()
     error_msg = ''
-    return redirect('/modeledit')
+    return redirect('/model_add')
 
 
 def view_models(form: ModelForm):
     global brand_for_model
     brand_for_model = form.brand_name.data
-    return redirect('/modeledit')
+    return redirect('/model_add')
 
 
 def delete_model(form: ModelForm):
     if not form.models.data:
-        flash("neeed set model name")
-        return redirect('/modeledit')
+        flash("need set model name")
+        return redirect('/model_add')
 
     model_name = form.models.data
 
     a.db().query(AutoModel).filter(AutoModel.model_name == model_name).delete(synchronize_session=False)
 
-    return redirect('/modeledit')
+    return redirect('/model_add')
 
 
 def model_form_action(form: ModelForm):
     global error_msg
     global brand_for_model
     if not form.model_name.data or not form.categories.data:
-        flash("neeed set model name and category")
-        return redirect('/modeledit')
+        flash("need set model name and category")
+        return redirect('/model_add')
 
     model = AutoModel(model_name=form.model_name.data, brand_id=form.brand_name.data, category_id=form.categories.data)
     brand_for_model = form.brand_name.data
     a.db().add_entity_object(model)
     a.db().commit_session()
-    return redirect('/modeledit')
+    return redirect('/model_add')
 
 
-@app.route('/modeledit', methods=['GET', 'POST'])
+@app.route('/model_add', methods=['GET', 'POST'])
 def page_gen():
     global error_msg
     global brands_backup
@@ -107,7 +107,7 @@ def model_action():
         return delete_model(model_form)
 
     error_msg = ''
-    return redirect('/modeledit')
+    return redirect('/model_add')
 
 
 @app.route('/brand_action', methods=['POST'])
@@ -122,4 +122,4 @@ def brand_action():
     form.error_string = error_msg
 
     error_msg = ''
-    return redirect('/modeledit')
+    return redirect('/model_add')
