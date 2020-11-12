@@ -60,7 +60,7 @@ def model_form_action(form: ModelForm):
 
 
 @app.route('/model_add', methods=['GET', 'POST'])
-def page_gen():
+def model_add_page_gen():
     global error_msg
     global brands_backup
     global brand_for_model

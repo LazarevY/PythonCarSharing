@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Register</title>
+</head>
+<body>
+{% with messages = get_flashed_messages() %}
+  {% if messages %}
+    <ul class=flashes>
+    {% for message in messages %}
+      <li>{{ message }}</li>
+    {% endfor %}
+    </ul>
+  {% endif %}
+{% endwith %}
+<form action="{{ url_for('register_client') }}" method="post">
+    {{ client_form.hidden_tag() }}
+
+    <p>
+        {{ client_form.name.label }}
+        {{ client_form.name }}
+    </p>
+
+    <p>
+        {{ client_form.surname.label }}
+        {{ client_form.surname }}
+    </p>
+    <p>
+        {{ client_form.passport.label }}
+        {{ client_form.passport }}
+    </p>
+
+    <p>
+        {{ client_form.drive_license.label }}
+        {{ client_form.drive_license }}
+    </p>
+    <p>
+        {{ client_form.submit() }}
+    </p>
+</form>
+</body>
+</html>
