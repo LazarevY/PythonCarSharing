@@ -4,6 +4,7 @@ import app_context as a
 from application.database.modeles.auto_brand import AutoBrand
 from application.database.modeles.auto_model import AutoModel
 from application.database.modeles.drive_category import DriveCategory
+from application.database.modeles.model_price import ModelPrice
 from application.pages.forms.brand_form import BrandForm
 from application.pages.forms.model_form import ModelForm
 
@@ -54,7 +55,13 @@ def model_form_action(form: ModelForm):
 
     model = AutoModel(model_name=form.model_name.data, brand_id=form.brand_name.data, category_id=form.categories.data)
     brand_for_model = form.brand_name.data
+
     a.db().add_entity_object(model)
+    a.db().commit_session()
+    model_id = a.db().query(AutoModel).filter(AutoModel.model_name == form.model_name.data).one()
+
+    model_price = ModelPrice(model_id=model_id.model_id, price=1000)
+    a.db().add_entity_object(model_price)
     a.db().commit_session()
     return redirect('/model_add')
 

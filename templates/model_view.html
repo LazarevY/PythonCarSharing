@@ -1,0 +1,23 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Models</title>
+</head>
+<body>
+<table>
+    <tr>
+        <th>Model name</th>
+        <th>Brand name</th>
+        <th>Price</th>
+    </tr>
+    {% for model in models %}
+        <tr>
+            <td>{{  model.model_name}}</td>
+            <td>{{ model.brand_name }}</td>
+            <td>{{ model.price }}</td>
+        </tr>
+    {% endfor %}
+</table>
+</body>
+</html>
