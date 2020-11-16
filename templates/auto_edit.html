@@ -1,0 +1,137 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Auto edit</title>
+</head>
+<body>
+<form action="{{ url_for('auto_edit_action') }}" method="post">
+    {{ form.hidden_tag() }}
+    {% with messages = get_flashed_messages() %}
+        {% if messages %}
+            <ul class=flashes>
+                {% for message in messages %}
+                    <li>{{ message }}</li>
+                {% endfor %}
+            </ul>
+        {% endif %}
+    {% endwith %}
+    <p>
+        {{ form.brand_select.label }}
+        {{ form.brand_select(**{"onchange":"models_for_brand()"}) }}
+    </p>
+    <p>
+        {{ form.model_select.label }}
+        {{ form.model_select(**{"onchange":"autos_for_model()"}) }}
+    </p>
+    <p>
+        {{ form.number_select.label }}
+        {{ form.number_select(**{"onchange":"auto_data()"}) }}
+    </p>
+    <p>
+        {{ form.number.label }}
+        {{ form.number }}
+    </p>
+    <p>
+        {{ form.mileage.label }}
+        {{ form.mileage }}
+    </p>
+    <p>
+        {{ form.quality.label }}
+        {{ form.quality }}
+    </p>
+    <p>
+        {{ form.delete_submit() }}
+        {{ form.update_submit() }}
+    </p>
+</form>
+<script src="//ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.min.js"></script>
+<script>
+    var csrftoken = "{{csrf_token()}}"
+
+    $.ajaxSetup({
+        beforeSend: function (xhr, settings) {
+            if (!/^(GET|HEAD|OPTIONS|TRACE)$/i.test(settings.type) && !this.crossDomain) {
+                xhr.setRequestHeader("X-CSRFToken", csrftoken)
+            }
+        }
+    });
+
+    function models_for_brand() {
+        var id = $("#{{ form.brand_select.id }}").val();
+        $.post('{{ url_for('get_models_for_brand') }}', {
+            brand_id: id
+        }).done(function (response) {
+            let $select = $("#{{ form.model_select.id }}");
+            $select.find('option').remove();
+            if (Object.keys(response).length === 0) {
+                $("#{{ form.delete_submit.id }}").attr("disabled", true)
+                $("#{{ form.update_submit.id }}").attr("disabled", true)
+                return;
+            }
+            $("#{{ form.delete_submit.id }}").attr("disabled", false)
+            $("#{{ form.update_submit.id }}").attr("disabled", false)
+            $.each(response, function (key, value) {
+                $select.append('<option value=' + key + '>' + value + '</option>');
+            });
+            autos_for_model(Object.keys(response)[0])
+        })
+
+    }
+
+    function autos_for_model(model_id = -1) {
+        var id = model_id
+        if (model_id === -1) {
+            id = $("#{{ form.model_select.id }}").val()
+        }
+        $.post('{{ url_for('get_autos_for_model') }}', {
+            model_id: id
+        }).done(function (response) {
+            let $select = $("#{{ form.number_select.id }}")
+            $select.find('option').remove();
+            if (Object.keys(response).length === 0) {
+                $("#{{ form.delete_submit.id }}").attr("disabled", true)
+                $("#{{ form.update_submit.id }}").attr("disabled", true)
+                return;
+            }
+            $("#{{ form.delete_submit.id }}").attr("disabled", false)
+            $("#{{ form.update_submit.id }}").attr("disabled", false)
+            $.each(response, function (key, value) {
+                $select.append('<option value=' + key + '>' + value + '</option>');
+            });
+            auto_data(Object.keys(response)[0])
+        })
+    }
+
+    function auto_data(auto_id = -1) {
+        var id = auto_id
+        if (auto_id === -1) {
+            id = $("#{{ form.number_select.id }}").val()
+        }
+        $.post('{{ url_for('get_auto_data') }}', {
+            auto_id: id
+        }).done(function (response) {
+
+            if (Object.keys(response).length === 0) {
+                $("#{{ form.delete_submit.id }}").attr("disabled", true)
+                $("#{{ form.update_submit.id }}").attr("disabled", true)
+                return;
+            }
+            $("#{{ form.delete_submit.id }}").attr("disabled", false)
+            $("#{{ form.update_submit.id }}").attr("disabled", false)
+
+            let $number = $("#{{ form.number.id }}")
+            let $mileage = $("#{{ form.mileage.id }}")
+            let $quality = $("#{{ form.quality.id }}")
+
+            $number.val(response["number"])
+            $mileage.val(response["mileage"])
+            $quality.val(response["quality"])
+
+        })
+    }
+
+    models_for_brand();
+</script>
+</body>
+</html>

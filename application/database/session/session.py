@@ -20,6 +20,9 @@ class DBSession(object):
     def query(self, *entities, **kwargs):
         return self._session.query(*entities, **kwargs)
 
+    def begin(self):
+        return self._session.begin()
+
     def add_entity_object(self, model: BaseModel, need_flush: bool = False):
         self._session.add(model)
 

@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Model Edit</title>
+</head>
+<body>
+{% with messages = get_flashed_messages() %}
+    {% if messages %}
+        <ul class=flashes>
+            {% for message in messages %}
+                <li>{{ message }}</li>
+            {% endfor %}
+        </ul>
+    {% endif %}
+{% endwith %}
+<form action="{{ url_for('model_action') }}" name="model_edit_form" method="post">
+    {{ model_form.hidden_tag() }}
+    {% if model_form.errors %}
+        <p>
+            {{ model_form.errors }}
+        </p>
+
+    {% endif %}
+    <p>
+        {{ model_form.model_name.label }}
+        {{ model_form.model_name }}
+    </p>
+    <p>
+        {{ model_form.categories.label }}
+        {{ model_form.categories() }}
+    </p>
+    <p>
+        {{ model_form.brand_name.label }}
+        {{ model_form.brand_name(**{"onchange":"models_for_brand(" + model_form.models.id + "," +  model_form.brand_name.id + ")"}) }}
+    </p>
+    <p>
+        {{ model_form.models.label }}
+        {{ model_form.models() }}
+    </p>
+    <p>
+        {{ model_form.model_submit }}
+        {{ model_form.view_models(id='view', hidden='true') }}
+        {{ model_form.delete_submit }}
+    </p>
+
+</form>
+
+<form action="{{ url_for('brand_action') }}" name="brand_edit_form" method="POST">
+    {{ brand_form.hidden_tag() }}
+
+    {% if brand_form.error_string != "" %}
+        <p>
+            Error
+            {{ brand_form.error_string }}
+        </p>
+    {% endif %}
+    <p>
+        {{ brand_form.new_brand_name.label }}
+        {{ brand_form.new_brand_name(size=20) }}
+    </p>
+    <p>
+        {{ brand_form.brand_submit }}
+    </p>
+</form>
+<script src="//ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.min.js"></script>
+<script>
+    function models_for_brand(model_select_elem, brand_elem) {
+        var csrftoken =  "{{csrf_token()}}"
+
+        $.ajaxSetup({
+            beforeSend: function (xhr, settings) {
+                if (!/^(GET|HEAD|OPTIONS|TRACE)$/i.test(settings.type) && !this.crossDomain) {
+                    xhr.setRequestHeader("X-CSRFToken", csrftoken)
+                }
+            }
+        });
+        var id = brand_elem.value
+        $.post('{{ url_for('get_models_for_brand') }}', {
+            brand_id: id
+        }).done(function (response) {
+            let $select = $(model_select_elem);
+            $select.find('option').remove();
+            $.each(response, function (key, value) {
+                $select.append('<option value=' + key + '>' + value + '</option>');
+            });
+        })
+    }
+</script>
+</body>
+</html>

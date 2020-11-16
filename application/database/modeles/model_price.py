@@ -10,4 +10,4 @@ class ModelPrice(BaseModel):
                       unique=True,
                       primary_key=True,
                       autoincrement=True)
-    price = Column(Integer)
+    price = Column(Integer, nullable=False)

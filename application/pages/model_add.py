@@ -28,12 +28,6 @@ def add_brand(form: BrandForm):
     return redirect('/model_add')
 
 
-def view_models(form: ModelForm):
-    global brand_for_model
-    brand_for_model = form.brand_name.data
-    return redirect('/model_add')
-
-
 def delete_model(form: ModelForm):
     if not form.models.data:
         flash("need set model name")
@@ -92,7 +86,7 @@ def model_add_page_gen():
         model_form.brand_name.data = brand_for_model
 
     error_msg = ''
-    return render_template("model_edit.html",
+    return render_template("model_add.html",
                            model_form=model_form,
                            brand_form=form)
 
@@ -103,10 +97,7 @@ def model_action():
     global brands_backup
     model_form = ModelForm()
 
-    if model_form.view_models.data:
-        return view_models(model_form)
-
-    elif model_form.model_submit.data:
+    if model_form.model_submit.data:
         model_form.validate()
         return model_form_action(model_form)
     elif model_form.delete_submit.data:
