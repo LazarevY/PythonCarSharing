@@ -1,4 +1,5 @@
 from flask import Flask
+from flask_cors import CORS
 from flask_wtf import CsrfProtect
 from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker
@@ -7,10 +8,11 @@ import os
 import config
 
 _app = Flask("Car Sharing")
-csrf = CsrfProtect()
-SECRET_KEY = os.urandom(32)
-_app.config['SECRET_KEY'] = SECRET_KEY
-csrf.init_app(_app)
+CORS(_app)
+# csrf = CsrfProtect()
+# SECRET_KEY = os.urandom(32)
+# _app.config['SECRET_KEY'] = SECRET_KEY
+# csrf.init_app(_app)
 
 
 def app():
