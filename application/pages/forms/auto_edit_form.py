@@ -5,6 +5,7 @@ from wtforms.validators import DataRequired, Regexp, NumberRange, Optional
 
 from app_context import db
 from application.database.modeles.auto_brand import AutoBrand
+from application.extend.EscapeStringField import EscapeStringField
 
 
 class AutoEdit(FlaskForm):
@@ -14,7 +15,7 @@ class AutoEdit(FlaskForm):
                                     get_label=lambda brand: brand.brand_name)
     model_select = SelectField(coerce=int, validate_choice=False)
     number_select = SelectField(coerce=int, validate_choice=False)
-    number = StringField(validators=[DataRequired()])
+    number = EscapeStringField(validators=[DataRequired()])
     mileage = IntegerField(validators=[DataRequired()])
     quality = IntegerField(validators=[DataRequired()])
     update_submit = SubmitField('Edit auto')

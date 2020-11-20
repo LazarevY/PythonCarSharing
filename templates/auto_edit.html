@@ -45,6 +45,24 @@
         {{ form.update_submit() }}
     </p>
 </form>
+<table>
+    <tr>
+        <th>Model name</th>
+        <th>Brand name</th>
+        <th>Number</th>
+        <th>Mileage</th>
+        <th>Quality(from 0 to 50)</th>
+    </tr>
+    {% for auto in autos %}
+        <tr>
+            <td>{{ auto.model_name }}</td>
+            <td>{{ auto.brand_name }}</td>
+            <td>{{ auto.registration_number }}</td>
+            <td>{{ auto.mileage }}</td>
+            <td>{{ auto.quality }}</td>
+        </tr>
+    {% endfor %}
+</table>
 <script src="//ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.min.js"></script>
 <script>
     var csrftoken = "{{csrf_token()}}"

@@ -2,6 +2,9 @@ from flask import render_template, redirect
 
 from app_context import app, db
 from application.database.modeles.auto import Auto
+from application.database.modeles.auto_brand import AutoBrand
+from application.database.modeles.auto_model import AutoModel
+from application.database.modeles.model_price import ModelPrice
 from application.pages.forms.auto_edit_form import AutoEdit
 
 appl = app()
@@ -10,7 +13,13 @@ appl = app()
 @appl.route('/auto/edit')
 def gen_auto_edit():
     form = AutoEdit()
-    return render_template("auto_edit.html", form=form)
+    autos_q = db() \
+        .query(Auto).join(AutoModel, Auto.model_id == AutoModel.model_id) \
+        .join(AutoBrand, AutoBrand.brand_id == AutoModel.brand_id) \
+        .join(ModelPrice, ModelPrice.model_id == Auto.model_id) \
+        .with_entities(AutoModel.model_name, AutoBrand.brand_name, Auto.registration_number, Auto.mileage, Auto.quality)
+    autos = autos_q.all()
+    return render_template("auto_edit.html", form=form, autos=autos)
 
 
 @appl.route('/auto/edit/submit', methods=['POST'])

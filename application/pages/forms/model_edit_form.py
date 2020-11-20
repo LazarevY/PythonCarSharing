@@ -4,6 +4,7 @@ from wtforms.ext.sqlalchemy.fields import QuerySelectField
 from wtforms.validators import DataRequired, Optional
 from app_context import app, db
 from application.database.modeles.auto_brand import AutoBrand
+from application.extend.EscapeStringField import EscapeStringField
 
 
 class ModelEditForm(FlaskForm):
@@ -13,7 +14,7 @@ class ModelEditForm(FlaskForm):
                                     get_label=lambda brand: brand.brand_name)
     model_select = SelectField(coerce=int, validators=[DataRequired()])
 
-    model_name = StringField('Model name', validators=[DataRequired()])
+    model_name = EscapeStringField('Model name', validators=[DataRequired()])
     model_brand = QuerySelectField('New brand',
                                    query_factory=lambda: db().query(AutoBrand).all(),
                                    get_pk=lambda brand: brand.brand_id,

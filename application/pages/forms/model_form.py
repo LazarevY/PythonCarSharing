@@ -2,9 +2,11 @@ from flask_wtf import FlaskForm
 from wtforms import StringField, SelectField, SubmitField, Label
 from wtforms.validators import DataRequired, Optional
 
+from application.extend.EscapeStringField import EscapeStringField
+
 
 class ModelForm(FlaskForm):
-    model_name = StringField('Model name', validators=[Optional()])
+    model_name = EscapeStringField('Model name', validators=[Optional()])
     brand_name = SelectField('Select Brand', coerce=int)
     models = SelectField('Available models', choices=[], validators=[Optional()])
     categories = SelectField('Model category', coerce=int, validators=[Optional()])

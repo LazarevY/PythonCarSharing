@@ -1,8 +1,10 @@
+import flask
 from flask import request, jsonify
 from sqlalchemy.exc import SQLAlchemyError
 
 from app_context import app, db
 from application.database.modeles.auto import Auto
+from application.database.modeles.auto_brand import AutoBrand
 from application.database.modeles.auto_model import AutoModel
 from application.database.modeles.model_price import ModelPrice
 
@@ -21,7 +23,7 @@ def get_models_for_brand():
 
     models_dict = dict()
     for m in models:
-        models_dict[int(m.model_id)] = m.model_name
+        models_dict[int(m.model_id)] = flask.Markup.escape(m.model_name)
 
     return jsonify(models_dict)
 
@@ -72,3 +74,20 @@ def get_auto_data():
         "mileage": auto_q.mileage,
         "quality": auto_q.quality
     })
+
+
+@appl.route('/test/modes/for/brandname', methods=['POST'])
+def get_models_for_brand_name():
+    name = request.form['name']
+    models_q = db() \
+        .query(AutoModel) \
+        .join(AutoBrand, AutoModel.brand_id == AutoBrand.brand_id) \
+        .filter(AutoBrand.brand_name == name)
+    models = models_q.all()
+
+    d = dict()
+
+    for model in models:
+        d[model.model_id] = model.model_name
+
+    return jsonify(d)
