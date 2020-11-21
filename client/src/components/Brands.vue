@@ -26,7 +26,12 @@
                 @click="editBrand(brand)">
                 Update
               </button>
-              <button type="button" class="btn btn-danger btn-sm">Delete</button>
+              <button
+                type="button"
+                class="btn btn-danger btn-sm"
+                @click="deleteBrand(brand)">
+                Delete
+              </button>
             </td>
           </tr>
           </tbody>
@@ -144,6 +149,22 @@ export default {
       this.editForm.new_name = brand.name;
       this.editForm.old_name = brand.name;
     },
+    deleteBrand(brand) {
+      const path = 'http://localhost:5000/services/auto/brands/remove';
+      if (confirm("Delete brand " + brand.name + "?")) {
+        const payload = {
+          brand_name: brand.name,
+        };
+        axios.post(path, payload)
+          .then((resp) => {
+            this.getBrands();
+          })
+          .catch((error) => {
+            console.error(error);
+            this.getBrands();
+          });
+      }
+    },
     initForm() {
       this.addBrandForm.brand_name = '';
     },
@@ -151,7 +172,7 @@ export default {
       evt.preventDefault();
       this.$refs.addBrandModal.hide();
       const payload = {
-        brand_name: this.addBrandForm.brand_name
+        brand_name: this.addBrandForm.brand_name,
       };
       this.addBrand(payload);
       this.initForm();
@@ -163,7 +184,7 @@ export default {
         new_name: this.editForm.new_name,
         old_name: this.editForm.old_name,
       };
-      this.updateBrand(payload, this.editForm.id);
+      this.updateBrand(payload);
     },
     onReset(evt) {
       evt.preventDefault();

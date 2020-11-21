@@ -8,6 +8,7 @@ import os
 import config
 
 _app = Flask("Car Sharing")
+_app.config.from_object(__name__)
 CORS(_app)
 # csrf = CsrfProtect()
 # SECRET_KEY = os.urandom(32)

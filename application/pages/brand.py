@@ -26,3 +26,14 @@ def service_brand_get():
         brands = [{'name': brand.brand_name} for brand in brands_q.all()]
         response_object['brands'] = brands
     return jsonify(response_object)
+
+
+@a.route('/services/auto/brands/remove', methods=['POST'])
+def service_brand_remove():
+    if request.method == 'POST':
+        brand_name = request.get_json().get('brand_name')
+        db().query(AutoBrand).filter(AutoBrand.brand_name == brand_name).delete()
+        db().commit_session()
+    return jsonify({
+        'status': 'success'
+    })
