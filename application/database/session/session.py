@@ -1,8 +1,8 @@
-#from https://github.com/sandix90/sqlalchemy_basics
+# from https://github.com/sandix90/sqlalchemy_basics
 
 from logging import getLogger
 
-from sqlalchemy.exc import IntegrityError, DataError
+from sqlalchemy.exc import IntegrityError, DataError, SQLAlchemyError
 from sqlalchemy.orm import Session
 
 from application.database.modeles.base import BaseModel
@@ -11,7 +11,6 @@ log = getLogger()
 
 
 class DBSession(object):
-
     _session: Session
 
     def __init__(self, session: Session, *args, **kwargs):
@@ -19,6 +18,26 @@ class DBSession(object):
 
     def query(self, *entities, **kwargs):
         return self._session.query(*entities, **kwargs)
+
+    def execute_query(self, query, auto_commit=False):
+        try:
+            val = query(self)
+            if auto_commit:
+                self.commit_session()
+            return val
+        except SQLAlchemyError:
+            self._session.rollback()
+            return None
+
+    def execute_add(self, entity, auto_commit=False):
+        try:
+            self.add_entity_object(entity)
+            if auto_commit:
+                self.commit_session()
+            return True
+        except SQLAlchemyError:
+            self._session.rollback()
+            return False
 
     def begin(self):
         return self._session.begin()

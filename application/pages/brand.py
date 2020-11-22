@@ -7,7 +7,7 @@ a = app()
 
 
 @a.route('/services/auto/brands', methods=['GET', 'POST', 'PUT'])
-def service_brand_get():
+def service_brand():
     response_object = {'status': 'success'}
 
     if request.method == 'POST':
