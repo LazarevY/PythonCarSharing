@@ -31,13 +31,13 @@ def service_model():
                                          .one())
         if brand_id is None or category_id is None:
             response_object['status'] = 'fail'
-            return response_object
+            return jsonify(response_object)
 
         model = AutoModel(brand_id=brand_id, model_name=post_data.get('model_name'), category_id=category_id)
 
         if not db().execute_add(model, True):
             response_object['status'] = 'fail'
-            return response_object
+            return jsonify(response_object)
 
         model_id = db().execute_query(lambda db: db
                                       .query(AutoModel)
@@ -56,18 +56,18 @@ def service_model():
 
         if brand_id is None or category_id is None:
             response_object['status'] = 'fail'
-            return response_object
+            return jsonify(response_object)
 
         db().execute_query(lambda d: d
                            .query(AutoModel)
                            .filter(and_(
-            AutoModel.model_name == post_data.get('old_model_name'),
-            AutoModel.brand_id == brand_id))
+                            AutoModel.model_name == post_data.get('old_model_name'),
+                            AutoModel.brand_id == brand_id))
                            .update({
-            'model_name': post_data.get('new_model_name'),
-            'brand_id': new_brand_id,
-            'category_id': category_id
-        }), True)
+                                'model_name': post_data.get('new_model_name'),
+                                'brand_id': new_brand_id,
+                                'category_id': category_id
+                            }), True)
 
         model_id = get_model_id(post_data.get('new_brand_name'), post_data.get('new_model_name'))
 
@@ -103,10 +103,30 @@ def service_model_remove():
         brand_id = get_brand_id(post_data.get('brand_name'))
         if brand_id is None:
             response_object['status'] = 'fail'
-            return response_object
+            return jsonify(response_object)
         db().execute_query(lambda d: d
                            .query(AutoModel)
                            .filter(AutoModel.brand_id == brand_id, AutoModel.model_name == post_data.get('model_name'))
                            .delete(),
                            True)
-    return response_object
+    return jsonify(response_object)
+
+
+@a.route('/services/auto/models/for_brand', methods=['POST'])
+def service_models_for_brand():
+    response_object = {'status': 'success'}
+    if request.method == 'POST':
+        post_data = request.get_json()
+        models_q = db().execute_query(lambda d: d
+                                      .query(AutoModel)
+                                      .join(AutoBrand, AutoBrand.brand_id == AutoModel.model_id)
+                                      .filter(AutoBrand.brand_name == post_data.get('brand_name'))
+                                      .all(),
+                                      True)
+        if models_q is None:
+            response_object['status'] = 'fail'
+            return jsonify(response_object)
+        models = [{'model_name': models_q.model_name, 'brand_name': model.brand_name} for model in models_q]
+        response_object['models'] = models
+
+    return jsonify(response_object)
