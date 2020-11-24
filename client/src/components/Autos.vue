@@ -5,7 +5,7 @@
         <h1>Autos</h1>
         <hr>
         <br><br>
-        <button type="button" class="btn btn-success btn-sm" v-b-modal.auto-modal>Add Model</button>
+        <button type="button" class="btn btn-success btn-sm" v-b-modal.auto-modal>Add Auto</button>
 
         <br><br>
         <table class="table table-hover">
@@ -47,106 +47,130 @@
       </div>
     </div>
 
-    <!--    <b-modal ref="addAutoModal"-->
-    <!--             id="auto-modal"-->
-    <!--             title="Add a auto"-->
-    <!--             hide-footer>-->
-    <!--      <b-form @submit="onSubmit" @reset="onReset" class="w-100">-->
-    <!--        <b-form-group id="form-brand-group"-->
-    <!--                      label="Brand: "-->
-    <!--                      label-for="form-brand-select">-->
-    <!--          <v-selectize id="form-brand-select"-->
-    <!--                       :options="getBrandOptions()"-->
-    <!--                       v-model="addModelForm.brand_name_select"-->
-    <!--                       placeholder="Select brand"-->
-    <!--                       required>-->
-    <!--          </v-selectize>-->
-    <!--        </b-form-group>-->
-    <!--        <b-form-group id="form-category-group"-->
-    <!--                      label="Category: "-->
-    <!--                      label-for="form-category-select">-->
-    <!--          <v-selectize id="form-category-select"-->
-    <!--                       :options="categories_options"-->
-    <!--                       v-model="addModelForm.model_category_name_select"-->
-    <!--                       placeholder="Select category"-->
-    <!--                       aria-required="true">-->
-    <!--          </v-selectize>-->
-    <!--        </b-form-group>-->
-    <!--        <b-form-group id="form-title-group"-->
-    <!--                      label="Model name:"-->
-    <!--                      label-for="form-model-input">-->
-    <!--          <b-form-input id="form-model-input"-->
-    <!--                        type="text"-->
-    <!--                        v-model="addModelForm.model_name"-->
-    <!--                        required-->
-    <!--                        placeholder="Enter model name">-->
-    <!--          </b-form-input>-->
-    <!--        </b-form-group>-->
+    <b-modal ref="addAutoModal"
+             id="auto-modal"
+             title="Add a auto"
+             hide-footer>
+      <b-form @submit="onSubmit" @reset="onReset" class="w-100">
+        <b-form-group id="form-brand-group"
+                      label="Brand: "
+                      label-for="form-brand-select">
+          <b-select id="form-brand-select"
+                    :options="getBrandOptions()"
+                    @change="updateModelsOptions(brand)"
+                    v-model="brand"
+                    placeholder="Select brand"
+                    required>
+          </b-select>
+        </b-form-group>
+        <b-form-group id="form-model-group"
+                      label="Model: "
+                      label-for="form-model-select">
+          <v-selectize id="form-model-select"
+                       :options="model_options"
+                       v-model="addAutoForm.model_id"
+                       placeholder="Select model"
+                       aria-required="true">
+          </v-selectize>
+        </b-form-group>
+        <b-form-group id="form-number-group"
+                      label="Number:"
+                      label-for="form-number-input">
+          <b-form-input id="form-model-input"
+                        type="text"
+                        v-model="addAutoForm.registration_number"
+                        required
+                        placeholder="Enter auto number">
+          </b-form-input>
+        </b-form-group>
 
-    <!--        <b-form-group label-for="form-price-input"-->
-    <!--                      label="Price: ">-->
-    <!--          <b-form-input id="form-price-input"-->
-    <!--                        type="number"-->
-    <!--                        v-model.number="addModelForm.price"-->
-    <!--                        required-->
-    <!--                        placeholder="Price of model">-->
+        <b-form-group label-for="form-mileage-input"
+                      label="Mileage: ">
+          <b-form-input id="form-mileage-input"
+                        type="number"
+                        v-model.number="addAutoForm.mileage"
+                        required
+                        placeholder="Mileage">
 
-    <!--          </b-form-input>-->
-    <!--        </b-form-group>-->
+          </b-form-input>
+        </b-form-group>
+        <b-form-group label-for="form-quality-input"
+                      label="Quality: ">
+          <b-form-input id="form-quality-input"
+                        type="number"
+                        v-model.number="addAutoForm.quality"
+                        required
+                        placeholder="Quality">
 
-    <!--        <b-button type="submit" variant="primary">Submit</b-button>-->
-    <!--        <b-button type="reset" variant="danger">Reset</b-button>-->
-    <!--      </b-form>-->
-    <!--    </b-modal>-->
+          </b-form-input>
+        </b-form-group>
 
-    <!--    <b-modal ref="editModelModal"-->
-    <!--             id="model-update-modal"-->
-    <!--             title="Update"-->
-    <!--             hide-footer>-->
-    <!--      <b-form @submit="onSubmitUpdate" @reset="onResetUpdate" class="w-100">-->
-    <!--        <b-form-group id="form-edit-brand-group"-->
-    <!--                      label="Brand: "-->
-    <!--                      label-for="form-edit-brand-select">-->
-    <!--          <v-selectize id="form-edit-brand-select"-->
-    <!--                       :options="getBrandOptions()"-->
-    <!--                       v-model="editForm.new_brand_name"-->
-    <!--                       placeholder="Select brand if needed"-->
-    <!--                       required>-->
-    <!--          </v-selectize>-->
-    <!--        </b-form-group>-->
-    <!--        <b-form-group id="form-author-edit-group"-->
-    <!--                      label="New model name:"-->
-    <!--                      label-for="form-model-edit-input">-->
-    <!--          <b-form-input id="form-model-edit-input"-->
-    <!--                        type="text"-->
-    <!--                        v-model="editForm.new_model_name"-->
-    <!--                        required>-->
-    <!--          </b-form-input>-->
-    <!--        </b-form-group>-->
-    <!--        <b-form-group id="form-edit-category-group"-->
-    <!--                      label="Category: "-->
-    <!--                      label-for="form-edit-brand-select">-->
-    <!--          <v-selectize id="form-edit-category-select"-->
-    <!--                       :options="categories_options"-->
-    <!--                       v-model="editForm.new_category_name"-->
-    <!--                       placeholder="Select category"-->
-    <!--                       required>-->
-    <!--          </v-selectize>-->
-    <!--        </b-form-group>-->
-    <!--        <b-form-group label-for="form-edit-price-input"-->
-    <!--                      label="Price: ">-->
-    <!--          <b-form-input id="form-edit-price-input"-->
-    <!--                        type="number"-->
-    <!--                        v-model.number="editForm.price"-->
-    <!--                        required-->
-    <!--                        placeholder="Price of model">-->
+        <b-button type="submit" variant="primary">Submit</b-button>
+        <b-button type="reset" variant="danger">Reset</b-button>
+      </b-form>
+    </b-modal>
 
-    <!--          </b-form-input>-->
-    <!--        </b-form-group>-->
-    <!--        <b-button type="submit" variant="primary">Update</b-button>-->
-    <!--        <b-button type="reset" variant="danger">Cancel</b-button>-->
-    <!--      </b-form>-->
-    <!--    </b-modal>-->
+    <b-modal ref="editAutoModal"
+             id="auto-update-modal"
+             title="Update"
+             hide-footer>
+      <b-form @submit="onSubmitUpdate" @reset="onResetUpdate" class="w-100">
+        <b-form-group id="form-edit-brand-group"
+                      label="Brand: "
+                      label-for="form-edit-brand-select">
+          <b-select id="form-edit-brand-select"
+                    :options="getBrandOptions()"
+                    @change="updateModelsOptions(editForm.brand_name_select)"
+                    v-model="editForm.brand_name_select"
+                    placeholder="Select brand"
+                    required>
+          </b-select>
+        </b-form-group>
+        <b-form-group id="form-edit-model-group"
+                      label="Model: "
+                      label-for="form-edit-model-select">
+          <v-selectize id="form-edit-model-select"
+                       :options="model_options"
+                       v-model="editForm.new_model_id"
+                       placeholder="Select model"
+                       aria-required="true">
+          </v-selectize>
+        </b-form-group>
+        <b-form-group id="form-edit-number-group"
+                      label="Number:"
+                      label-for="form-edit-number-input">
+          <b-form-input id="form-edit-number-input"
+                        type="text"
+                        v-model="editForm.new_number"
+                        required
+                        placeholder="Enter auto number">
+          </b-form-input>
+        </b-form-group>
+
+        <b-form-group label-for="form-edit-mileage-input"
+                      label="Mileage: ">
+          <b-form-input id="form-edit-mileage-input"
+                        type="number"
+                        v-model.number="editForm.mileage"
+                        required
+                        placeholder="Mileage">
+
+          </b-form-input>
+        </b-form-group>
+        <b-form-group label-for="form-edit-quality-input"
+                      label="Quality: ">
+          <b-form-input id="form-edit-quality-input"
+                        type="number"
+                        v-model.number="editForm.quality"
+                        required
+                        placeholder="Quality">
+
+          </b-form-input>
+        </b-form-group>
+        <b-button type="submit" variant="primary">Update</b-button>
+        <b-button type="reset" variant="danger">Cancel</b-button>
+      </b-form>
+    </b-modal>
 
   </div>
 </template>
@@ -156,25 +180,24 @@ import axios from 'axios';
 import 'selectize/dist/css/selectize.default.css' // This is required, we use the same css as selectize.js
 
 export default {
-  name: "Models",
+  name: "Autos",
   data() {
     return {
+      brand: '',
       brands: [],
       autos: [],
       brand_options: [],
       model_options: [],
       addAutoForm: {
-        brand_name_select: '',
-        model_name_select: '',
+        model_id: 0,
         registration_number: '',
         mileage: 0,
         quality: 0,
       },
       editForm: {
-        old_brand_name: '',
-        new_brand_name: '',
-        old_model_name: '',
-        new_model_name: '',
+        brand_name_select: null,
+        old_model_id: 0,
+        new_model_id: 0,
         old_number: '',
         new_number: '',
         mileage: 0,
@@ -196,31 +219,26 @@ export default {
     getBrandOptions() {
       const options = []
       this.brands.forEach(brand => {
-        options.push({label: brand.name, code: brand.name})
+        options.push({value: brand.name, text: brand.name})
       });
       return options;
     },
-    getCategories() {
-      const path = 'http://localhost:5000/services/auto/categories';
-      axios.get(path)
-        .then((res) => {
-          res.data.categories.forEach(category => {
-            this.categories_options.push({label: category.name, code: category.name})
-          });
-        })
-        .catch((error) => {
-          console.error(error);
-        });
+    updateModelsOptions(brand_name) {
+      console.log(brand_name)
+      this.getModelOptions(brand_name);
     },
-
-    getModelOptions(brand_name) {
+    getModelOptions(brand_name, event = '') {
       const path = 'http://localhost:5000/services/auto/models/for_brand';
       const payload = {
         brand_name: brand_name,
       };
       axios.post(path, payload)
         .then((res) => {
-          this.models = res.data.models;
+          this.model_options = []
+          res.data.models.forEach(model => {
+            this.model_options.push({label: model.model_name, code: model.model_id})
+          })
+          this.editForm.new_model_id = this.model_options[0]
         })
         .catch((error) => {
           console.error(error);
@@ -236,97 +254,97 @@ export default {
           console.error(error);
         });
     },
-    addModel(payload) {
-      const path = 'http://localhost:5000/services/auto/models';
+    addAuto(payload) {
+      const path = 'http://localhost:5000/services/auto/autos';
       axios.post(path, payload)
         .then(() => {
-          this.getModels();
+          this.created();
         })
         .catch((error) => {
           // eslint-отключение следующей строки
           console.log(error);
-          this.getModels();
+          this.getAutos();
         });
     },
-    updateModel(payload) {
-      const path = 'http://localhost:5000/services/auto/models';
+    updateAuto(payload) {
+      const path = 'http://localhost:5000/services/auto/autos';
       axios.put(path, payload)
         .then(() => {
-          this.getModels();
+          this.created()
         })
         .catch((error) => {
           // eslint-отключение следующей строки
           console.error(error);
-          this.getModels();
+          this.getAutos();
         });
     },
-    editAuto(model) {
-      this.editForm.new_brand_name = {label: model.brand_name, code: model.brand_name}
-      this.editForm.old_brand_name = model.brand_name;
-      this.editForm.new_model_name = model.model_name;
-      this.editForm.old_model_name = model.model_name;
-      this.editForm.new_category_name = {label: model.category_name, code: model.category_name};
-      this.editForm.old_category_name = model.category_name;
-      this.editForm.price = model.price;
+    editAuto(auto) {
+      this.editForm.brand_name_select = auto.brand_name
+      this.editForm.new_model_id = {label: auto.model_name, code: auto.model_id};
+      this.editForm.old_model_id = auto.model_name;
+      this.editForm.old_number = auto.number;
+      this.editForm.new_number = auto.number;
+      this.editForm.mileage = auto.mileage;
+      this.editForm.quality = auto.quality;
     },
-    deleteAuto(model) {
-      const path = 'http://localhost:5000/services/auto/models/remove';
-      if (confirm("Delete model " + model.model_name + "?")) {
+    deleteAuto(auto) {
+      const path = 'http://localhost:5000/services/auto/autos/remove';
+      if (confirm("Delete auto " + auto.number + "?")) {
         const payload = {
-          brand_name: model.brand_name,
-          model_name: model.model_name,
+          number: auto.number,
         };
         axios.post(path, payload)
           .then((resp) => {
-            this.getModels();
+            this.created();
           })
           .catch((error) => {
             console.error(error);
-            this.getModels();
+            this.getAutos();
           });
       }
     },
     initForm() {
-      this.addModelForm.brand_name_select = null;
-      this.addModelForm.model_name = '';
-      this.addModelForm.model_category_name_select = null;
-      this.addModelForm.price = 1000;
+      this.addAutoForm.brand_name_select = null;
+      this.addAutoForm.model_name_select = null;
+      this.addAutoForm.registration_number = null;
+      this.addAutoForm.mileage = 1000;
+      this.addAutoForm.quality = 50;
     },
     onSubmit(evt) {
       evt.preventDefault();
-      this.$refs.addModelModal.hide();
+      this.$refs.addAutoModal.hide();
       const payload = {
-        brand_name: this.addModelForm.brand_name_select.code,
-        model_name: this.addModelForm.model_name,
-        category_name: this.addModelForm.model_category_name_select.code,
-        price: this.addModelForm.price,
+        model_id: this.addAutoForm.model_id.code,
+        registration_number: this.addAutoForm.registration_number,
+        mileage: this.addAutoForm.mileage,
+        quality: this.addAutoForm.quality,
       };
-      this.addModel(payload);
+      this.addAuto(payload);
       this.initForm();
     },
     onSubmitUpdate(evt) {
       evt.preventDefault();
-      this.$refs.editModelModal.hide();
+      this.$refs.editAutoModal.hide();
       const payload = {
-        new_brand_name: this.editForm.new_brand_name.code,
-        old_brand_name: this.editForm.old_brand_name,
-        new_model_name: this.editForm.new_model_name,
-        old_model_name: this.editForm.old_model_name,
-        new_category_name: this.editForm.new_category_name.code,
-        price: this.editForm.price,
+        old_model_id: this.editForm.old_model_id,
+        new_model_id: this.editForm.new_model_id.code,
+        old_number: this.editForm.old_number,
+        new_number: this.editForm.new_number,
+        mileage: this.editForm.mileage,
+        quality: this.editForm.quality,
       };
-      this.updateModel(payload);
+      this.updateAuto(payload);
     },
     onReset(evt) {
       evt.preventDefault();
-      this.$refs.addModelModal.hide();
+      this.$refs.addAutoModal.hide();
       this.initForm();
     },
     onResetUpdate(evt) {
       evt.preventDefault();
-      this.$refs.editModelModal.hide();
+      this.$refs.editAutoModal.hide();
       this.initForm();
-      this.getModels();
+      this.created()
     },
   },
   created() {

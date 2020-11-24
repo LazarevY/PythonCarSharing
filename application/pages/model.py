@@ -61,13 +61,13 @@ def service_model():
         db().execute_query(lambda d: d
                            .query(AutoModel)
                            .filter(and_(
-                            AutoModel.model_name == post_data.get('old_model_name'),
-                            AutoModel.brand_id == brand_id))
+            AutoModel.model_name == post_data.get('old_model_name'),
+            AutoModel.brand_id == brand_id))
                            .update({
-                                'model_name': post_data.get('new_model_name'),
-                                'brand_id': new_brand_id,
-                                'category_id': category_id
-                            }), True)
+            'model_name': post_data.get('new_model_name'),
+            'brand_id': new_brand_id,
+            'category_id': category_id
+        }), True)
 
         model_id = get_model_id(post_data.get('new_brand_name'), post_data.get('new_model_name'))
 
@@ -80,12 +80,13 @@ def service_model():
                                       .join(AutoBrand, AutoModel.brand_id == AutoBrand.brand_id)
                                       .join(ModelPrice, ModelPrice.model_id == AutoModel.model_id)
                                       .join(DriveCategory, DriveCategory.category_id == AutoModel.category_id)
-                                      .with_entities(AutoBrand.brand_name, AutoModel.model_name,
+                                      .with_entities(AutoBrand.brand_name, AutoModel.model_name, AutoModel.model_id,
                                                      ModelPrice.price, DriveCategory.category_name))
         if models_q is None:
             response_object['status'] = 'fail'
             return jsonify(response_object)
         models = [{
+            'model_id': model.model_id,
             'model_name': model.model_name,
             'brand_name': model.brand_name,
             'category_name': model.category_name,
@@ -119,14 +120,16 @@ def service_models_for_brand():
         post_data = request.get_json()
         models_q = db().execute_query(lambda d: d
                                       .query(AutoModel)
-                                      .join(AutoBrand, AutoBrand.brand_id == AutoModel.model_id)
+                                      .join(AutoBrand, AutoBrand.brand_id == AutoModel.brand_id)
                                       .filter(AutoBrand.brand_name == post_data.get('brand_name'))
+                                      .with_entities(AutoBrand.brand_name, AutoModel.model_id, AutoModel.model_name)
                                       .all(),
                                       True)
         if models_q is None:
             response_object['status'] = 'fail'
             return jsonify(response_object)
-        models = [{'model_name': models_q.model_name, 'brand_name': model.brand_name} for model in models_q]
+        models = [{'model_id': model.model_id, 'model_name': model.model_name, 'brand_name': model.brand_name} for
+                  model in models_q]
         response_object['models'] = models
 
     return jsonify(response_object)

@@ -1,5 +1,5 @@
 # from https://github.com/sandix90/sqlalchemy_basics
-
+import traceback
 from logging import getLogger
 
 from sqlalchemy.exc import IntegrityError, DataError, SQLAlchemyError
@@ -27,6 +27,7 @@ class DBSession(object):
             return val
         except SQLAlchemyError:
             self._session.rollback()
+            traceback.print_exc()
             return None
 
     def execute_add(self, entity, auto_commit=False):
@@ -37,6 +38,7 @@ class DBSession(object):
             return True
         except SQLAlchemyError:
             self._session.rollback()
+            traceback.print_exc()
             return False
 
     def begin(self):
