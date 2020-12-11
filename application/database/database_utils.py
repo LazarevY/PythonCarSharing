@@ -1,6 +1,7 @@
 from app_context import db
 from application.database.modeles.auto_brand import AutoBrand
 from application.database.modeles.auto_model import AutoModel
+from application.database.modeles.client import Client
 from application.database.modeles.drive_category import DriveCategory
 
 
@@ -30,3 +31,12 @@ def get_category_id(category_name: str) -> int:
                                      .with_entities(DriveCategory.category_id)
                                      .one())
     return None if category_id is None else category_id
+
+
+def get_client_id(phone_number: int) -> int:
+    client_id = db().execute_query(lambda d: d
+                                   .query(Client)
+                                   .filter(Client.client_phone == phone_number)
+                                   .with_entities(Client.client_id)
+                                   .one())
+    return None if client_id is None else client_id

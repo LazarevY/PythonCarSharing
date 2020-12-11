@@ -1,10 +1,11 @@
 from application.database.modeles.base import *
-from sqlalchemy import Column, Integer, VARCHAR, ForeignKey
+from sqlalchemy import Column, Integer, VARCHAR, ForeignKey, BigInteger
 
 
 class Client(BaseModel):
     __tablename__ = 'clients'
     client_id = Column(Integer, nullable=False, unique=True, primary_key=True, autoincrement=True)
+    client_phone = Column(BigInteger, nullable=False, unique=True)
     client_name = Column(VARCHAR(60))
     client_second_name = Column(VARCHAR(60))
     client_father_name = Column(VARCHAR(60), nullable=True)

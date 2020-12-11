@@ -11,6 +11,9 @@ import * as rules from "vee-validate/dist/rules";
 import Brands from "@/components/Brands";
 import Models from "@/components/Models";
 import Autos from "../components/Autos";
+import LogAndRegister from "../components/LogAndRegister";
+import Vuelidate from 'vuelidate'
+import ClientMain from "../components/ClientMain";
 
 
 Object.keys(rules).forEach(rule => {
@@ -23,6 +26,7 @@ Vue.component("ValidationProvider", ValidationProvider);
 
 Vue.component('v-selectize', VSelectize)
 Vue.use(Router);
+Vue.use(Vuelidate)
 
 export default new Router({
   routes: [
@@ -40,6 +44,16 @@ export default new Router({
       path: '/services/auto/autos',
       name: 'Autos',
       component: Autos
+    },
+    {
+      path: '/login',
+      name: 'LogAndRegister',
+      component: LogAndRegister
+    },
+    {
+      path: '/main',
+      name: 'ClientM0ain',
+      component: ClientMain
     }
   ],
 });
