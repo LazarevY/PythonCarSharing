@@ -52,7 +52,7 @@ export default new Router({
     },
     {
       path: '/main',
-      name: 'ClientM0ain',
+      name: 'ClientMain',
       component: ClientMain
     }
   ],

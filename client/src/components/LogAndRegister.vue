@@ -270,6 +270,7 @@ export default {
             this.check_login.status = false;
           } else {
             this.check_login.status = true;
+            this.$router.push({name: 'ClientMain'})
           }
         })
         .catch((error) => {
