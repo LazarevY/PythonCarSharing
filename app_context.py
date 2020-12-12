@@ -1,14 +1,18 @@
 from flask import Flask
 from flask_cors import CORS
-from flask_wtf import CsrfProtect
+from flask_jwt_extended import (
+    JWTManager
+)
 from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker
-from application.database.session.session import DBSession
-import os
+
 import config
+from application.database.session.session import DBSession
 
 _app = Flask("Car Sharing")
 _app.config.from_object(__name__)
+_app.config['JWT_SECRET_KEY'] = 'super-secret'  # Change this!
+jwt = JWTManager(_app)
 CORS(_app)
 # csrf = CsrfProtect()
 # SECRET_KEY = os.urandom(32)

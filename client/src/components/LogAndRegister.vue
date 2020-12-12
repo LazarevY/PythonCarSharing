@@ -134,6 +134,7 @@
 <script>
 import {maxLength, minLength, required, sameAs} from 'vuelidate/lib/validators'
 import axios from "axios";
+import Vue from "vue";
 
 export default {
 
@@ -270,6 +271,7 @@ export default {
             this.check_login.status = false;
           } else {
             this.check_login.status = true;
+            Vue.$cookies.set('token', resp.data.token)
             this.$router.push({name: 'ClientMain'})
           }
         })

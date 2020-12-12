@@ -1,5 +1,10 @@
-from flask import request, jsonify
+from flask import request, jsonify, session
 from werkzeug.security import generate_password_hash, check_password_hash
+
+from flask_jwt_extended import (
+    JWTManager, jwt_required, create_access_token,
+    get_jwt_identity
+)
 
 from app_context import app, db
 from application.database.database_utils import get_client_id
@@ -102,6 +107,8 @@ def client_log_in():
                 'name': client_data.client_phone,
                 'lastName': client_data.client_second_name,
             }
+            access_token = create_access_token(identity=client_data.client_phone)
+            response_object['token'] = access_token
         else:
             response_object['logined'] = False
             response_object['message'] = 'Wrong password'

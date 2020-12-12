@@ -16,6 +16,11 @@ import Vuelidate from 'vuelidate'
 import ClientMain from "../components/ClientMain";
 
 
+import VueCookies from 'vue-cookies'
+Vue.use(VueCookies)
+Vue.$cookies.config('7d')
+
+
 Object.keys(rules).forEach(rule => {
   extend(rule, rules[rule]);
 });
@@ -54,6 +59,10 @@ export default new Router({
       path: '/main',
       name: 'ClientMain',
       component: ClientMain
+    },
+    {
+      path: '/',
+      redirect: {name: 'LogAndRegister'}
     }
   ],
 });
