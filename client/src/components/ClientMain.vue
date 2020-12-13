@@ -75,6 +75,20 @@
 
     <main role="main" class="container" v-show="have_active_contract">
       <h2>You have a rent</h2>
+      <table class="table table-bordered">
+        <tr>
+          <td>Contract id: {{ this.rent_data.contract_id }}</td>
+        </tr>
+        <tr>
+          <td>Auto: {{ this.rent_data.brand_name }} {{ this.rent_data.model_name }}</td>
+        </tr>
+        <tr>
+          <td>{{ this.rent_data.registration_number }}</td>
+        </tr>
+        <tr>
+          <button @click="toTrackManage" class="btn btn-danger btn-sm">To Track Manage</button>
+        </tr>
+      </table>
 
     </main>
 
@@ -137,6 +151,12 @@ export default {
         auto_model: '',
         auto_number: '',
         client_phone: null,
+      },
+      rent_data: {
+        contract_id: null,
+        registration_number: null,
+        model_name: null,
+        brand_name: null
       }
 
     }
@@ -179,7 +199,7 @@ export default {
         auto_number: this.rent_form.auto_number
       }
 
-      axios.post(path, payload,{
+      axios.post(path, payload, {
         headers: {Authorization: "Bearer " + Vue.$cookies.get('token')}
       })
         .then((resp) => {
@@ -191,6 +211,9 @@ export default {
     onRentReset() {
 
     },
+    toTrackManage(){
+      this.$router.push({name: 'TrackManage'})
+    }
   },
   watch: {
     'auto_rent.office_choice': function (value) {
@@ -211,6 +234,9 @@ export default {
           this.clientData.name = resp.data.userdata.name;
           this.clientData.phone = resp.data.userdata.phone;
           this.have_active_contract = resp.data.isActiveContract;
+          if (resp.data.isActiveContract) {
+            this.rent_data = resp.data.rent_data;
+          }
           Vue.$cookies.set('userphone', this.clientData.phone)
           this.points = resp.data.points;
         }

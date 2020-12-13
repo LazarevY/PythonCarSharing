@@ -12,6 +12,7 @@ from application.database.session.session import DBSession
 _app = Flask("Car Sharing")
 _app.config.from_object(__name__)
 _app.config['JWT_SECRET_KEY'] = 'super-secret'  # Change this!
+_app.config['JWT_ACCESS_TOKEN_EXPIRES'] = False
 jwt = JWTManager(_app)
 CORS(_app)
 # csrf = CsrfProtect()

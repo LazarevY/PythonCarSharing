@@ -17,6 +17,7 @@ import ClientMain from "../components/ClientMain";
 
 
 import VueCookies from 'vue-cookies'
+import TrackManage from "../components/TrackManage";
 Vue.use(VueCookies)
 Vue.$cookies.config('7d')
 
@@ -59,6 +60,11 @@ export default new Router({
       path: '/main',
       name: 'ClientMain',
       component: ClientMain
+    },
+    {
+      path: '/main/rent/track',
+      name: 'TrackManage',
+      component: TrackManage
     },
     {
       path: '/',

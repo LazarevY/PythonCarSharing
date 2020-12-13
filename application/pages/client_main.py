@@ -9,7 +9,6 @@ from sqlalchemy import and_, desc
 from app_context import app, db
 from application.database.database_utils import get_client_id, get_auto_id, get_auto_status_id_by_name, \
     get_rent_status_id_by_name
-from application.database.modeles.AutoTrack import AutoTrack
 from application.database.modeles.RentContract import RentContract
 from application.database.modeles.RentHistory import RentHistory
 from application.database.modeles.RentStatus import RentStatus
@@ -37,14 +36,34 @@ def client_main_load():
     client_id = get_client_id(userphone)
 
     active_contracts = db().execute_query(lambda d: d
-                                          .query(RentHistory)
-                                          .join(RentContract, RentHistory.contract_id == RentContract.contract_id)
-                                          .join(RentStatus, RentHistory.status_id == RentStatus.status_id)
+                                          .query(RentContract)
+                                          .join(RentStatus, RentContract.rent_status_id == RentStatus.status_id)
                                           .filter(and_(RentContract.client_id == client_id,
                                                        RentStatus.status_name == 'in_force'))
                                           .all())
 
     response_object['isActiveContract'] = True if len(active_contracts) > 0 else False
+
+    if len(active_contracts) > 0:
+        contract_data = db().execute_query(lambda d: d
+                                           .query(RentContract)
+                                           .join(Auto, Auto.auto_id == RentContract.auto_id)
+                                           .join(AutoModel, AutoModel.model_id == Auto.model_id)
+                                           .join(AutoBrand, AutoModel.brand_id == AutoBrand.brand_id)
+                                           .filter(RentContract.client_id == client_id)
+                                           .order_by(desc(RentContract.rent_begin_date))
+                                           .limit(1)
+                                           .with_entities(RentContract.contract_id,
+                                                          Auto.registration_number,
+                                                          AutoModel.model_name,
+                                                          AutoBrand.brand_name)
+                                           .one())
+        response_object['rent_data'] = {
+            'contract_id': contract_data.contract_id,
+            'registration_number' : contract_data.registration_number,
+            'model_name': contract_data.model_name,
+            'brand_name': contract_data.brand_name
+        }
 
     response_object['points'] = [{'code': p.office_id, 'label': p.office_address} for p in points]
 
@@ -95,17 +114,21 @@ def create_rent():
     client_id = get_client_id(data['phone'])
     auto_id = get_auto_id(data['auto_number'])
     date = datetime.now()
-    contract = RentContract(client_id=client_id, auto_id=auto_id, rent_begin_date=date, rent_price=1)
+    contract = RentContract(client_id=client_id,
+                            auto_id=auto_id,
+                            rent_status_id=get_rent_status_id_by_name('in_force'),
+                            rent_begin_date=date,
+                            rent_price=1)
 
     db().execute_add(contract, True)
 
     contract_data = db().execute_query(lambda d: d
-                                     .query(RentContract)
-                                     .filter(RentContract.client_id == client_id)
-                                     .order_by(desc(RentContract.rent_begin_date))
-                                     .limit(1)
-                                     .with_entities(RentContract.contract_id, RentContract.client_id)
-                                     .one())
+                                       .query(RentContract)
+                                       .filter(RentContract.client_id == client_id)
+                                       .order_by(desc(RentContract.rent_begin_date))
+                                       .limit(1)
+                                       .with_entities(RentContract.contract_id, RentContract.client_id)
+                                       .one())
     db().execute_query(lambda d: d.query(Auto).filter(Auto.auto_id == auto_id).update(
         {'status_id': get_auto_status_id_by_name('free_wait')}), True)
     rent_note = RentHistory(contract_id=contract_data.contract_id,
