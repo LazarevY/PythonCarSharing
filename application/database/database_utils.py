@@ -6,6 +6,7 @@ from application.database.modeles.auto_brand import AutoBrand
 from application.database.modeles.auto_model import AutoModel
 from application.database.modeles.client import Client
 from application.database.modeles.drive_category import DriveCategory
+from application.database.modeles.violation_type import ViolationType
 
 rent_statuses = {
     r.status_name: r.status_id for r in db().execute_query(lambda d: d
@@ -17,8 +18,17 @@ rent_statuses = {
 auto_statuses = {
     r.status_name: r.status_id for r in db().execute_query(lambda d: d
                                                            .query(StatusOfAuto)
-                                                           .with_entities(StatusOfAuto.status_id, StatusOfAuto.status_name)
+                                                           .with_entities(StatusOfAuto.status_id,
+                                                                          StatusOfAuto.status_name)
                                                            .all())
+}
+
+violation_types = {
+    r.violation_type: r.violation_id for r in db().execute_query(lambda d: d
+                                                                 .query(StatusOfAuto)
+                                                                 .with_entities(ViolationType.violation_id,
+                                                                                ViolationType.violation_type)
+                                                                 .all())
 }
 
 
@@ -74,3 +84,7 @@ def get_rent_status_id_by_name(name):
 
 def get_auto_status_id_by_name(name):
     return auto_statuses[name]
+
+
+def get_violation_id(name):
+    return violation_types[name]

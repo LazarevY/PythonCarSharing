@@ -136,4 +136,9 @@ def create_rent():
                             note='',
                             note_date=date)
     db().execute_add(rent_note, True)
+    db().execute_query(lambda d: d
+                       .query(AutoInOffice)
+                       .filter(and_(AutoInOffice.auto_id == auto_id, AutoInOffice.departure_date == None))
+                       .update({'departure_date': date}),
+                       True)
     return jsonify(response_object)
