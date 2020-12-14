@@ -88,10 +88,10 @@ def client_autos_for_point_load():
                                .join(AutoModel, AutoModel.model_id == Auto.model_id)
                                .join(AutoBrand, AutoBrand.brand_id == AutoModel.brand_id)
                                .with_entities(
-        AutoBrand.brand_name,
-        AutoModel.model_name,
-        Auto.registration_number,
-        Auto.mileage)
+                                    AutoBrand.brand_name,
+                                    AutoModel.model_name,
+                                    Auto.registration_number,
+                                    Auto.mileage)
                                .all()
                                )
     response_object['autos'] = [{

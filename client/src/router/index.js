@@ -18,6 +18,7 @@ import ClientMain from "../components/ClientMain";
 
 import VueCookies from 'vue-cookies'
 import TrackManage from "../components/TrackManage";
+import ClientStatistic from "../components/ClientStatistic";
 Vue.use(VueCookies)
 Vue.$cookies.config('7d')
 
@@ -65,6 +66,11 @@ export default new Router({
       path: '/main/rent/track',
       name: 'TrackManage',
       component: TrackManage
+    },
+    {
+      path: '/main/client/statistic',
+      name: 'ClientStatistic',
+      component: ClientStatistic
     },
     {
       path: '/',
