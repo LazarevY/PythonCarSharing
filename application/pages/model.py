@@ -123,8 +123,7 @@ def service_models_for_brand():
                                       .join(AutoBrand, AutoBrand.brand_id == AutoModel.brand_id)
                                       .filter(AutoBrand.brand_name == post_data.get('brand_name'))
                                       .with_entities(AutoBrand.brand_name, AutoModel.model_id, AutoModel.model_name)
-                                      .all(),
-                                      True)
+                                      .all())
         if models_q is None:
             response_object['status'] = 'fail'
             return jsonify(response_object)
