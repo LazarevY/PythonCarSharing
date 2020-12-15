@@ -18,6 +18,7 @@ from application.database.modeles.auto_in_office import AutoInOffice
 from application.database.modeles.auto_model import AutoModel
 from application.database.modeles.branch_office import BranchOffice
 from application.database.modeles.violation import Violation
+from application.database.modeles.violation_type import ViolationType
 
 a = app()
 
@@ -112,6 +113,26 @@ def client_statistic_load():
                     'rent_end_date': str(t.rent_end_date)
                 }
                 for t in rents_data
+            ]
+        violates_data = db().execute_query(lambda d: d
+                                           .query(Violation)
+                                           .join(ViolationType, ViolationType.violation_id == Violation.violation_id)
+                                           .join(RentContract, and_(RentContract.contract_id == Violation.contract_id,
+                                                                    RentContract.client_id == client_id))
+                                           .with_entities(RentContract.rent_begin_date,
+                                                          ViolationType.desc,
+                                                          Violation.note,
+                                                          Violation.fine)
+                                           .all())
+        response_object['violates_data'] = \
+            [
+                {
+                    'contract_date': str(v.rent_begin_date),
+                    'desc': v.desc,
+                    'note': v.note,
+                    'fine': v.fine
+                }
+                for v in violates_data
             ]
 
     return jsonify(response_object)

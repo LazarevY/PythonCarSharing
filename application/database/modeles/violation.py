@@ -8,3 +8,4 @@ class Violation(BaseModel):
     contract_id = Column(Integer, ForeignKey('rent_contracts.contract_id'))
     violation_id = Column(Integer,  ForeignKey('violation_type.violation_id'))
     note = Column(VARCHAR(400), nullable=True)
+    fine = Column(Integer)

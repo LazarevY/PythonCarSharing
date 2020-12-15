@@ -18,17 +18,15 @@
         <div class="form-inline mt-2 mt-md-0">
           <ul class="navbar-nav mr-auto">
             <li class="nav-item">
-              <a class="nav-link active">{{ this.clientData.name }}</a>
-            </li>
-            <li class="nav-item">
-              <a>
-                <button class="btn btn-warning btn-sm" @click="$router.push({name: 'ClientLogout'})">Logout</button>
-              </a>
+              <b-dropdown :text="clientData.name" class="m-md-2">
+                <b-dropdown-item @click="$router.push({name: 'ClientLogout'})">Logout</b-dropdown-item>
+              </b-dropdown>
             </li>
           </ul>
         </div>
       </div>
     </nav>
+
 
     <div class="container">
       <b-form @submit="onTrackSubmit" class="w-100">

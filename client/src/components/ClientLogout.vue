@@ -9,7 +9,7 @@ export default {
   name: "ClientLogout",
   created() {
     Vue.$cookies.remove('token');
-    Vue.$cookies.remove('phone');
+    Vue.$cookies.remove('userphone');
     this.$router.push({name: 'LogAndRegister'});
   }
 }
