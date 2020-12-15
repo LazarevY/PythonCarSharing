@@ -1,151 +1,186 @@
 <template>
-  <div class="container">
-    <div class="row">
-      <div class="col-sm-10">
-        <h1>Models</h1>
-        <hr>
-        <br><br>
-        <button type="button" class="btn btn-success btn-sm" v-b-modal.model-modal>Add Model</button>
-
-        <br><br>
-        <table class="table table-hover">
-          <thead>
-          <tr>
-            <th scope="col">Brand</th>
-            <th scope="col">Model</th>
-            <th scope="col">Category</th>
-            <th scope="col">Price</th>
-            <th></th>
-          </tr>
-          </thead>
-          <tbody>
-          <tr v-for="(model, index) in models" :key="index">
-            <td>{{ model.brand_name }}</td>
-            <td>{{ model.model_name }}</td>
-            <td>{{ model.category_name }}</td>
-            <td>{{ model.price }}</td>
-            <td>
-              <button
-                type="button"
-                class="btn btn-warning btn-sm"
-                v-b-modal.model-update-modal
-                @click="editModel(model)">
-                Update
-              </button>
-              <button
-                type="button"
-                class="btn btn-danger btn-sm"
-                @click="deleteModel(model)">
-                Delete
-              </button>
-            </td>
-          </tr>
-          </tbody>
-        </table>
+  <div>
+    <nav class="navbar navbar-expand-md navbar-dark fixed-top bg-dark">
+      <a class="navbar-brand" href="#">Fixed navbar</a>
+      <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarCollapse"
+              aria-controls="navbarCollapse" aria-expanded="false" aria-label="Toggle navigation">
+        <span class="navbar-toggler-icon"></span>
+      </button>
+      <div class="collapse navbar-collapse" id="navbarCollapse">
+        <ul class="navbar-nav mr-auto">
+          <li class="nav-item">
+            <a class="nav-link" @click="$router.push({name: 'ServiceMain'})">Home <span class="sr-only">(current)</span></a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" @click="$router.push({name: 'Brands'})">Brands</a>
+          </li>
+          <li class="nav-item active">
+            <a class="nav-link" @click="$router.push({name: 'Models'})">Models</a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" @click="$router.push({name: 'Autos'})">Autos</a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" @click="$router.push({name: 'ServiceClient'})">Clients</a>
+          </li>
+        </ul>
+        <div class="form-inline mt-2 mt-md-0">
+          <ul class="navbar-nav mr-auto">
+            <li class="nav-item">
+              <a class="nav-link active"></a>
+            </li>
+          </ul>
+        </div>
       </div>
+    </nav>
+    <div class="container">
+      <div class="row">
+        <div class="col-sm-10">
+          <h1>Models</h1>
+          <hr>
+          <br><br>
+          <button type="button" class="btn btn-success btn-sm" v-b-modal.model-modal>Add Model</button>
+
+          <br><br>
+          <table class="table table-hover">
+            <thead>
+            <tr>
+              <th scope="col">Brand</th>
+              <th scope="col">Model</th>
+              <th scope="col">Category</th>
+              <th scope="col">Price</th>
+              <th></th>
+            </tr>
+            </thead>
+            <tbody>
+            <tr v-for="(model, index) in models" :key="index">
+              <td>{{ model.brand_name }}</td>
+              <td>{{ model.model_name }}</td>
+              <td>{{ model.category_name }}</td>
+              <td>{{ model.price }}</td>
+              <td>
+                <button
+                  type="button"
+                  class="btn btn-warning btn-sm"
+                  v-b-modal.model-update-modal
+                  @click="editModel(model)">
+                  Update
+                </button>
+                <button
+                  type="button"
+                  class="btn btn-danger btn-sm"
+                  @click="deleteModel(model)">
+                  Delete
+                </button>
+              </td>
+            </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+      <b-modal ref="addModelModal"
+               id="model-modal"
+               title="Add a new model of auto"
+               hide-footer>
+        <b-form @submit="onSubmit" @reset="onReset" class="w-100">
+          <b-form-group id="form-brand-group"
+                        label="Brand: "
+                        label-for="form-brand-select">
+            <v-selectize id="form-brand-select"
+                         :options="getBrandOptions()"
+                         v-model="addModelForm.brand_name_select"
+                         placeholder="Select brand"
+                         required>
+            </v-selectize>
+          </b-form-group>
+          <b-form-group id="form-category-group"
+                        label="Category: "
+                        label-for="form-category-select">
+            <v-selectize id="form-category-select"
+                         :options="categories_options"
+                         v-model="addModelForm.model_category_name_select"
+                         placeholder="Select category"
+                         aria-required="true">
+            </v-selectize>
+          </b-form-group>
+          <b-form-group id="form-title-group"
+                        label="Model name:"
+                        label-for="form-model-input">
+            <b-form-input id="form-model-input"
+                          type="text"
+                          v-model="addModelForm.model_name"
+                          required
+                          placeholder="Enter model name">
+            </b-form-input>
+          </b-form-group>
+
+          <b-form-group label-for="form-price-input"
+                        label="Price: ">
+            <b-form-input id="form-price-input"
+                          type="number"
+                          v-model.number="addModelForm.price"
+                          required
+                          placeholder="Price of model">
+
+            </b-form-input>
+          </b-form-group>
+
+          <b-button type="submit" variant="primary">Submit</b-button>
+          <b-button type="reset" variant="danger">Reset</b-button>
+        </b-form>
+      </b-modal>
+
+      <b-modal ref="editModelModal"
+               id="model-update-modal"
+               title="Update"
+               hide-footer>
+        <b-form @submit="onSubmitUpdate" @reset="onResetUpdate" class="w-100">
+          <b-form-group id="form-edit-brand-group"
+                        label="Brand: "
+                        label-for="form-edit-brand-select">
+            <v-selectize id="form-edit-brand-select"
+                         :options="getBrandOptions()"
+                         v-model="editForm.new_brand_name"
+                         placeholder="Select brand if needed"
+                         required>
+            </v-selectize>
+          </b-form-group>
+          <b-form-group id="form-author-edit-group"
+                        label="New model name:"
+                        label-for="form-model-edit-input">
+            <b-form-input id="form-model-edit-input"
+                          type="text"
+                          v-model="editForm.new_model_name"
+                          required>
+            </b-form-input>
+          </b-form-group>
+          <b-form-group id="form-edit-category-group"
+                        label="Category: "
+                        label-for="form-edit-brand-select">
+            <v-selectize id="form-edit-category-select"
+                         :options="categories_options"
+                         v-model="editForm.new_category_name"
+                         placeholder="Select category"
+                         required>
+            </v-selectize>
+          </b-form-group>
+          <b-form-group label-for="form-edit-price-input"
+                        label="Price: ">
+            <b-form-input id="form-edit-price-input"
+                          type="number"
+                          v-model.number="editForm.price"
+                          required
+                          placeholder="Price of model">
+
+            </b-form-input>
+          </b-form-group>
+          <b-button type="submit" variant="primary">Update</b-button>
+          <b-button type="reset" variant="danger">Cancel</b-button>
+        </b-form>
+      </b-modal>
+
     </div>
-
-    <b-modal ref="addModelModal"
-             id="model-modal"
-             title="Add a new model of auto"
-             hide-footer>
-      <b-form @submit="onSubmit" @reset="onReset" class="w-100">
-        <b-form-group id="form-brand-group"
-                      label="Brand: "
-                      label-for="form-brand-select">
-          <v-selectize id="form-brand-select"
-                       :options="getBrandOptions()"
-                       v-model="addModelForm.brand_name_select"
-                       placeholder="Select brand"
-                       required>
-          </v-selectize>
-        </b-form-group>
-        <b-form-group id="form-category-group"
-                      label="Category: "
-                      label-for="form-category-select">
-          <v-selectize id="form-category-select"
-                       :options="categories_options"
-                       v-model="addModelForm.model_category_name_select"
-                       placeholder="Select category"
-                       aria-required="true">
-          </v-selectize>
-        </b-form-group>
-        <b-form-group id="form-title-group"
-                      label="Model name:"
-                      label-for="form-model-input">
-          <b-form-input id="form-model-input"
-                        type="text"
-                        v-model="addModelForm.model_name"
-                        required
-                        placeholder="Enter model name">
-          </b-form-input>
-        </b-form-group>
-
-        <b-form-group label-for="form-price-input"
-                      label="Price: ">
-          <b-form-input id="form-price-input"
-                        type="number"
-                        v-model.number="addModelForm.price"
-                        required
-                        placeholder="Price of model">
-
-          </b-form-input>
-        </b-form-group>
-
-        <b-button type="submit" variant="primary">Submit</b-button>
-        <b-button type="reset" variant="danger">Reset</b-button>
-      </b-form>
-    </b-modal>
-
-    <b-modal ref="editModelModal"
-             id="model-update-modal"
-             title="Update"
-             hide-footer>
-      <b-form @submit="onSubmitUpdate" @reset="onResetUpdate" class="w-100">
-        <b-form-group id="form-edit-brand-group"
-                      label="Brand: "
-                      label-for="form-edit-brand-select">
-          <v-selectize id="form-edit-brand-select"
-                       :options="getBrandOptions()"
-                       v-model="editForm.new_brand_name"
-                       placeholder="Select brand if needed"
-                       required>
-          </v-selectize>
-        </b-form-group>
-        <b-form-group id="form-author-edit-group"
-                      label="New model name:"
-                      label-for="form-model-edit-input">
-          <b-form-input id="form-model-edit-input"
-                        type="text"
-                        v-model="editForm.new_model_name"
-                        required>
-          </b-form-input>
-        </b-form-group>
-        <b-form-group id="form-edit-category-group"
-                      label="Category: "
-                      label-for="form-edit-brand-select">
-          <v-selectize id="form-edit-category-select"
-                       :options="categories_options"
-                       v-model="editForm.new_category_name"
-                       placeholder="Select category"
-                       required>
-          </v-selectize>
-        </b-form-group>
-        <b-form-group label-for="form-edit-price-input"
-                      label="Price: ">
-          <b-form-input id="form-edit-price-input"
-                        type="number"
-                        v-model.number="editForm.price"
-                        required
-                        placeholder="Price of model">
-
-          </b-form-input>
-        </b-form-group>
-        <b-button type="submit" variant="primary">Update</b-button>
-        <b-button type="reset" variant="danger">Cancel</b-button>
-      </b-form>
-    </b-modal>
-
   </div>
 </template>
 

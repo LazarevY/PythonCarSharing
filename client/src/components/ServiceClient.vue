@@ -8,14 +8,20 @@
       </button>
       <div class="collapse navbar-collapse" id="navbarCollapse">
         <ul class="navbar-nav mr-auto">
+          <li class="nav-item">
+            <a class="nav-link" @click="$router.push({name: 'ServiceMain'})">Home <span class="sr-only">(current)</span></a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" @click="$router.push({name: 'Brands'})">Brands</a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" @click="$router.push({name: 'Models'})">Models</a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" @click="$router.push({name: 'Autos'})">Autos</a>
+          </li>
           <li class="nav-item active">
-            <a class="nav-link" href="#">Home <span class="sr-only">(current)</span></a>
-          </li>
-          <li class="nav-item">
-            <a class="nav-link" href="#">Link</a>
-          </li>
-          <li class="nav-item">
-            <a class="nav-link disabled" href="#" tabindex="-1" aria-disabled="true">Disabled</a>
+            <a class="nav-link" @click="$router.push({name: 'ServiceClient'})">Clients</a>
           </li>
         </ul>
         <div class="form-inline mt-2 mt-md-0">

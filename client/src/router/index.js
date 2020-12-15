@@ -20,6 +20,8 @@ import VueCookies from 'vue-cookies'
 import TrackManage from "../components/TrackManage";
 import ClientStatistic from "../components/ClientStatistic";
 import ServiceClient from "../components/ServiceClient";
+import ServiceMain from "../components/ServiceMain";
+import ClientLogout from "../components/ClientLogout";
 Vue.use(VueCookies)
 Vue.$cookies.config('7d')
 
@@ -79,8 +81,18 @@ export default new Router({
       component: ServiceClient
     },
     {
+      path: '/client/logout',
+      name: 'ClientLogout',
+      component: ClientLogout,
+    },
+    {
       path: '/',
       redirect: {name: 'LogAndRegister'}
+    },
+    {
+      path: '/services/main',
+      name: 'ServiceMain',
+      component: ServiceMain,
     }
   ],
 });

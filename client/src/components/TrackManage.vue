@@ -8,20 +8,22 @@
       </button>
       <div class="collapse navbar-collapse" id="navbarCollapse">
         <ul class="navbar-nav mr-auto">
-          <li class="nav-item">
-            <a class="nav-link" href="#">Home <span class="sr-only">(current)</span></a>
-          </li>
           <li class="nav-item active">
-            <a class="nav-link" href="#">Tracker</a>
+            <a class="nav-link" @click="$router.push({name: 'ClientMain'})">Home <span class="sr-only">(current)</span></a>
           </li>
           <li class="nav-item">
-            <a class="nav-link disabled" href="#" tabindex="-1" aria-disabled="true">Disabled</a>
+            <a class="nav-link" @click="$router.push({name: 'ClientStatistic'})">Statistic</a>
           </li>
         </ul>
         <div class="form-inline mt-2 mt-md-0">
           <ul class="navbar-nav mr-auto">
             <li class="nav-item">
               <a class="nav-link active">{{ this.clientData.name }}</a>
+            </li>
+            <li class="nav-item">
+              <a>
+                <button class="btn btn-warning btn-sm" @click="$router.push({name: 'ClientLogout'})">Logout</button>
+              </a>
             </li>
           </ul>
         </div>

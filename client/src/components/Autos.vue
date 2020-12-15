@@ -1,245 +1,280 @@
 <template>
-  <div class="container">
-    <div class="row">
-      <div>
-        <h1>Autos</h1>
-        <hr>
-        <br><br>
-        <button type="button" class="btn btn-success btn-sm" v-b-modal.auto-modal>Add Auto</button>
-        <button type="button" class="btn btn-success btn-sm" @click="updateAutos">Reload Autos</button>
-
-        <br><br>
-        <table class="table table-hover">
-          <thead>
-          <tr>
-            <th scope="col">
-              <div>Brand</div>
-              <br>
-              <v-selectize :options="filter_auto.brands"
-                           v-model="filter_auto.brand">
-              </v-selectize>
-            </th>
-            <th scope="col">
-              Model
-              <v-selectize :options="filter_auto.models"
-                           v-model="filter_auto.model">
-              </v-selectize>
-
-            </th>
-            <th scope="col">
-              Registration number
-              <v-selectize :options="filter_auto.numbers"
-                           v-model="filter_auto.number">
-              </v-selectize>
-            </th>
-            <th scope="col">Mileage</th>
-            <th scope="col">Available</th>
-            <th scope="col">Office</th>
-            <th scope="col">Quality</th>
-            <th></th>
-          </tr>
-          </thead>
-          <tbody>
-          <tr v-for="(auto, index) in autos" :key="index">
-            <td>{{ auto.brand_name }}</td>
-            <td>{{ auto.model_name }}</td>
-            <td>{{ auto.number }}</td>
-            <td>{{ auto.mileage }}</td>
-            <td>{{ auto.available }}</td>
-            <td @click="updateLocation(auto)">{{ auto.current_office }}</td>
-            <td>{{ auto.quality }}</td>
-            <td>
-              <button
-                type="button"
-                class="btn btn-warning btn-sm"
-                v-b-modal.auto-update-modal
-                @click="editAuto(auto)">
-                Update
-              </button>
-              <button
-                type="button"
-                class="btn btn-danger btn-sm"
-                @click="deleteAuto(auto)">
-                Delete
-              </button>
-              <button
-                type="button"
-                class="btn btn-warning btn-sm"
-                v-b-modal.historyViewModal
-                @click="viewHistory(auto)">
-                History
-              </button>
-            </td>
-          </tr>
-          </tbody>
-        </table>
+  <div>
+    <nav class="navbar navbar-expand-md navbar-dark fixed-top bg-dark">
+      <a class="navbar-brand" href="#">Fixed navbar</a>
+      <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarCollapse"
+              aria-controls="navbarCollapse" aria-expanded="false" aria-label="Toggle navigation">
+        <span class="navbar-toggler-icon"></span>
+      </button>
+      <div class="collapse navbar-collapse" id="navbarCollapse">
+        <ul class="navbar-nav mr-auto">
+          <li class="nav-item">
+            <a class="nav-link" @click="$router.push({name: 'ServiceMain'})">Home <span class="sr-only">(current)</span></a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" @click="$router.push({name: 'Brands'})">Brands</a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" @click="$router.push({name: 'Models'})">Models</a>
+          </li>
+          <li class="nav-item active">
+            <a class="nav-link" @click="$router.push({name: 'Autos'})">Autos</a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" @click="$router.push({name: 'ServiceClient'})">Clients</a>
+          </li>
+        </ul>
+        <div class="form-inline mt-2 mt-md-0">
+          <ul class="navbar-nav mr-auto">
+            <li class="nav-item">
+              <a class="nav-link active"></a>
+            </li>
+          </ul>
+        </div>
       </div>
+    </nav>
+    <div class="container">
+      <div class="row">
+        <div>
+          <h1>Autos</h1>
+          <hr>
+          <br><br>
+          <button type="button" class="btn btn-success btn-sm" v-b-modal.auto-modal>Add Auto</button>
+          <button type="button" class="btn btn-success btn-sm" @click="updateAutos">Reload Autos</button>
+
+          <br><br>
+          <table class="table table-hover">
+            <thead>
+            <tr>
+              <th scope="col">
+                <div>Brand</div>
+                <br>
+                <v-selectize :options="filter_auto.brands"
+                             v-model="filter_auto.brand">
+                </v-selectize>
+              </th>
+              <th scope="col">
+                Model
+                <v-selectize :options="filter_auto.models"
+                             v-model="filter_auto.model">
+                </v-selectize>
+
+              </th>
+              <th scope="col">
+                Registration number
+                <v-selectize :options="filter_auto.numbers"
+                             v-model="filter_auto.number">
+                </v-selectize>
+              </th>
+              <th scope="col">Mileage</th>
+              <th scope="col">Available</th>
+              <th scope="col">Office</th>
+              <th scope="col">Quality</th>
+              <th></th>
+            </tr>
+            </thead>
+            <tbody>
+            <tr v-for="(auto, index) in autos" :key="index">
+              <td>{{ auto.brand_name }}</td>
+              <td>{{ auto.model_name }}</td>
+              <td>{{ auto.number }}</td>
+              <td>{{ auto.mileage }}</td>
+              <td>{{ auto.available }}</td>
+              <td @click="updateLocation(auto)">{{ auto.current_office }}</td>
+              <td>{{ auto.quality }}</td>
+              <td>
+                <button
+                  type="button"
+                  class="btn btn-warning btn-sm"
+                  v-b-modal.auto-update-modal
+                  @click="editAuto(auto)">
+                  Update
+                </button>
+                <button
+                  type="button"
+                  class="btn btn-danger btn-sm"
+                  @click="deleteAuto(auto)">
+                  Delete
+                </button>
+                <button
+                  type="button"
+                  class="btn btn-warning btn-sm"
+                  v-b-modal.historyViewModal
+                  @click="viewHistory(auto)">
+                  History
+                </button>
+              </td>
+            </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+      <b-modal ref="addAutoModal"
+               id="auto-modal"
+               title="Add a auto"
+               hide-footer>
+        <b-form @submit="onSubmit" @reset="onReset" class="w-100">
+          <b-form-group id="form-brand-group"
+                        label="Brand: "
+                        label-for="form-brand-select">
+            <b-select id="form-brand-select"
+                      :options="getBrandOptions()"
+                      @change="updateModelsOptions(brand)"
+                      v-model="brand"
+                      placeholder="Select brand"
+                      required>
+            </b-select>
+          </b-form-group>
+          <b-form-group id="form-model-group"
+                        label="Model: "
+                        label-for="form-model-select">
+            <v-selectize id="form-model-select"
+                         :options="model_options"
+                         v-model="addAutoForm.model_id"
+                         placeholder="Select model"
+                         aria-required="true">
+            </v-selectize>
+          </b-form-group>
+          <b-form-group id="form-number-group"
+                        label="Number:"
+                        label-for="form-number-input">
+            <b-form-input id="form-model-input"
+                          type="text"
+                          v-model="addAutoForm.registration_number"
+                          required
+                          placeholder="Enter auto number">
+            </b-form-input>
+          </b-form-group>
+
+          <b-form-group label-for="form-mileage-input"
+                        label="Mileage: ">
+            <b-form-input id="form-mileage-input"
+                          type="number"
+                          v-model.number="addAutoForm.mileage"
+                          required
+                          placeholder="Mileage">
+
+            </b-form-input>
+          </b-form-group>
+          <b-form-group label-for="form-quality-input"
+                        label="Quality: ">
+            <b-form-input id="form-quality-input"
+                          type="number"
+                          v-model.number="addAutoForm.quality"
+                          required
+                          placeholder="Quality">
+
+            </b-form-input>
+          </b-form-group>
+
+          <b-button type="submit" variant="primary">Submit</b-button>
+          <b-button type="reset" variant="danger">Reset</b-button>
+        </b-form>
+      </b-modal>
+
+      <b-modal ref="editAutoModal"
+               id="auto-update-modal"
+               title="Update"
+               hide-footer>
+        <b-form @submit="onSubmitUpdate" @reset="onResetUpdate" class="w-100">
+          <b-form-group id="form-edit-brand-group"
+                        label="Brand: "
+                        label-for="form-edit-brand-select">
+            <b-select id="form-edit-brand-select"
+                      :options="getBrandOptions()"
+                      @change="updateModelsOptions(editForm.brand_name_select)"
+                      v-model="editForm.brand_name_select"
+                      placeholder="Select brand"
+                      required>
+            </b-select>
+          </b-form-group>
+          <b-form-group id="form-edit-model-group"
+                        label="Model: "
+                        label-for="form-edit-model-select">
+            <v-selectize id="form-edit-model-select"
+                         :options="model_options"
+                         v-model="editForm.new_model_id"
+                         placeholder="Select model"
+                         aria-required="true">
+            </v-selectize>
+          </b-form-group>
+
+          <b-form-group label="Location: "
+                        label-for="form-edit-location-select"
+                        v-show="!editForm.disable_location_edit">
+            <v-selectize id="form-edit-location-select"
+                         :options="change_location_points"
+                         v-model="editForm.new_office"
+                         placeholder="Select location"
+                         aria-required="true">
+            </v-selectize>
+          </b-form-group>
+
+          <b-form-group id="form-edit-number-group"
+                        label="Number:"
+                        label-for="form-edit-number-input">
+            <b-form-input id="form-edit-number-input"
+                          type="text"
+                          v-model="editForm.new_number"
+                          required
+                          placeholder="Enter auto number">
+            </b-form-input>
+          </b-form-group>
+
+          <b-form-group label-for="form-edit-mileage-input"
+                        label="Mileage: ">
+            <b-form-input id="form-edit-mileage-input"
+                          type="number"
+                          v-model.number="editForm.mileage"
+                          required
+                          placeholder="Mileage">
+
+            </b-form-input>
+          </b-form-group>
+          <b-form-group label-for="form-edit-quality-input"
+                        label="Quality: ">
+            <b-form-input id="form-edit-quality-input"
+                          type="number"
+                          v-model.number="editForm.quality"
+                          required
+                          placeholder="Quality">
+
+            </b-form-input>
+          </b-form-group>
+          <b-button type="submit" variant="primary">Update</b-button>
+          <b-button type="reset" variant="danger">Cancel</b-button>
+        </b-form>
+      </b-modal>
+
+      <b-modal ref="historyView"
+               id="historyViewModal"
+               title="History"
+               hide-footer>
+        <div class="container">
+
+          <table v-for="note in auto_history" class="table table-bordered">
+            <tr>
+              <th>Client</th>
+              <td>{{ note.client }}</td>
+            </tr>
+            <tr>
+              <th>Begin date</th>
+              <td>{{ note.begin_date }}</td>
+            </tr>
+            <tr>
+              <th>End date</th>
+              <td>{{ note.end_date }}</td>
+            </tr>
+            <tr>
+              <th>Mileage</th>
+              <td>{{ note.mileage }}</td>
+            </tr>
+          </table>
+        </div>
+      </b-modal>
+
     </div>
-
-    <b-modal ref="addAutoModal"
-             id="auto-modal"
-             title="Add a auto"
-             hide-footer>
-      <b-form @submit="onSubmit" @reset="onReset" class="w-100">
-        <b-form-group id="form-brand-group"
-                      label="Brand: "
-                      label-for="form-brand-select">
-          <b-select id="form-brand-select"
-                    :options="getBrandOptions()"
-                    @change="updateModelsOptions(brand)"
-                    v-model="brand"
-                    placeholder="Select brand"
-                    required>
-          </b-select>
-        </b-form-group>
-        <b-form-group id="form-model-group"
-                      label="Model: "
-                      label-for="form-model-select">
-          <v-selectize id="form-model-select"
-                       :options="model_options"
-                       v-model="addAutoForm.model_id"
-                       placeholder="Select model"
-                       aria-required="true">
-          </v-selectize>
-        </b-form-group>
-        <b-form-group id="form-number-group"
-                      label="Number:"
-                      label-for="form-number-input">
-          <b-form-input id="form-model-input"
-                        type="text"
-                        v-model="addAutoForm.registration_number"
-                        required
-                        placeholder="Enter auto number">
-          </b-form-input>
-        </b-form-group>
-
-        <b-form-group label-for="form-mileage-input"
-                      label="Mileage: ">
-          <b-form-input id="form-mileage-input"
-                        type="number"
-                        v-model.number="addAutoForm.mileage"
-                        required
-                        placeholder="Mileage">
-
-          </b-form-input>
-        </b-form-group>
-        <b-form-group label-for="form-quality-input"
-                      label="Quality: ">
-          <b-form-input id="form-quality-input"
-                        type="number"
-                        v-model.number="addAutoForm.quality"
-                        required
-                        placeholder="Quality">
-
-          </b-form-input>
-        </b-form-group>
-
-        <b-button type="submit" variant="primary">Submit</b-button>
-        <b-button type="reset" variant="danger">Reset</b-button>
-      </b-form>
-    </b-modal>
-
-    <b-modal ref="editAutoModal"
-             id="auto-update-modal"
-             title="Update"
-             hide-footer>
-      <b-form @submit="onSubmitUpdate" @reset="onResetUpdate" class="w-100">
-        <b-form-group id="form-edit-brand-group"
-                      label="Brand: "
-                      label-for="form-edit-brand-select">
-          <b-select id="form-edit-brand-select"
-                    :options="getBrandOptions()"
-                    @change="updateModelsOptions(editForm.brand_name_select)"
-                    v-model="editForm.brand_name_select"
-                    placeholder="Select brand"
-                    required>
-          </b-select>
-        </b-form-group>
-        <b-form-group id="form-edit-model-group"
-                      label="Model: "
-                      label-for="form-edit-model-select">
-          <v-selectize id="form-edit-model-select"
-                       :options="model_options"
-                       v-model="editForm.new_model_id"
-                       placeholder="Select model"
-                       aria-required="true">
-          </v-selectize>
-        </b-form-group>
-
-        <b-form-group label="Location: "
-                      label-for="form-edit-location-select"
-                      v-show="!editForm.disable_location_edit">
-          <v-selectize id="form-edit-location-select"
-                       :options="change_location_points"
-                       v-model="editForm.new_office"
-                       placeholder="Select location"
-                       aria-required="true">
-          </v-selectize>
-        </b-form-group>
-
-        <b-form-group id="form-edit-number-group"
-                      label="Number:"
-                      label-for="form-edit-number-input">
-          <b-form-input id="form-edit-number-input"
-                        type="text"
-                        v-model="editForm.new_number"
-                        required
-                        placeholder="Enter auto number">
-          </b-form-input>
-        </b-form-group>
-
-        <b-form-group label-for="form-edit-mileage-input"
-                      label="Mileage: ">
-          <b-form-input id="form-edit-mileage-input"
-                        type="number"
-                        v-model.number="editForm.mileage"
-                        required
-                        placeholder="Mileage">
-
-          </b-form-input>
-        </b-form-group>
-        <b-form-group label-for="form-edit-quality-input"
-                      label="Quality: ">
-          <b-form-input id="form-edit-quality-input"
-                        type="number"
-                        v-model.number="editForm.quality"
-                        required
-                        placeholder="Quality">
-
-          </b-form-input>
-        </b-form-group>
-        <b-button type="submit" variant="primary">Update</b-button>
-        <b-button type="reset" variant="danger">Cancel</b-button>
-      </b-form>
-    </b-modal>
-
-    <b-modal ref="historyView"
-             id="historyViewModal"
-             title="History"
-             hide-footer>
-      <div class="container">
-
-        <table v-for="note in auto_history" class="table table-bordered">
-          <tr>
-            <th>Client</th>
-            <td>{{ note.client }}</td>
-          </tr>
-          <tr>
-            <th>Begin date</th>
-            <td>{{ note.begin_date }}</td>
-          </tr>
-          <tr>
-            <th>End date</th>
-            <td>{{ note.end_date }}</td>
-          </tr>
-          <tr>
-            <th>Mileage</th>
-            <td>{{ note.mileage }}</td>
-          </tr>
-        </table>
-      </div>
-    </b-modal>
-
   </div>
 </template>
 
