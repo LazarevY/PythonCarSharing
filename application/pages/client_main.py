@@ -17,6 +17,8 @@ from application.database.modeles.auto_brand import AutoBrand
 from application.database.modeles.auto_in_office import AutoInOffice
 from application.database.modeles.auto_model import AutoModel
 from application.database.modeles.branch_office import BranchOffice
+from application.database.modeles.client_category import ClientCategory
+from application.database.modeles.drive_category import DriveCategory
 
 a = app()
 
@@ -60,7 +62,7 @@ def client_main_load():
                                            .one())
         response_object['rent_data'] = {
             'contract_id': contract_data.contract_id,
-            'registration_number' : contract_data.registration_number,
+            'registration_number': contract_data.registration_number,
             'model_name': contract_data.model_name,
             'brand_name': contract_data.brand_name
         }
@@ -76,6 +78,17 @@ def client_autos_for_point_load():
     response_object = {'status': 'success', 'logined': True}
     data = request.get_json()
 
+    client_id = get_client_id(get_jwt_identity())
+
+    client_categories = db().execute_query(lambda d: d
+                                           .query(ClientCategory)
+                                           .join(DriveCategory,
+                                                 DriveCategory.category_id == ClientCategory.category_id)
+                                           .filter(ClientCategory.client_id == client_id)
+                                           .with_entities(DriveCategory.category_id)
+                                           .all())
+    client_categories_lst = [ac.category_id for ac in client_categories]
+
     autos = db().execute_query(lambda d: d
                                .query(Auto)
                                .filter(Auto.status_id == 0)
@@ -87,11 +100,11 @@ def client_autos_for_point_load():
                                          AutoInOffice.departure_date == None))
                                .join(AutoModel, AutoModel.model_id == Auto.model_id)
                                .join(AutoBrand, AutoBrand.brand_id == AutoModel.brand_id)
-                               .with_entities(
-                                    AutoBrand.brand_name,
-                                    AutoModel.model_name,
-                                    Auto.registration_number,
-                                    Auto.mileage)
+                               .filter(AutoModel.category_id.in_(client_categories_lst))
+                               .with_entities(AutoBrand.brand_name,
+                                              AutoModel.model_name,
+                                              Auto.registration_number,
+                                              Auto.mileage)
                                .all()
                                )
     response_object['autos'] = [{

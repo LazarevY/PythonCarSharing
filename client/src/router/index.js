@@ -19,6 +19,7 @@ import ClientMain from "../components/ClientMain";
 import VueCookies from 'vue-cookies'
 import TrackManage from "../components/TrackManage";
 import ClientStatistic from "../components/ClientStatistic";
+import ServiceClient from "../components/ServiceClient";
 Vue.use(VueCookies)
 Vue.$cookies.config('7d')
 
@@ -71,6 +72,11 @@ export default new Router({
       path: '/main/client/statistic',
       name: 'ClientStatistic',
       component: ClientStatistic
+    },
+    {
+      path: '/services/client',
+      name: 'ServiceClient',
+      component: ServiceClient
     },
     {
       path: '/',
