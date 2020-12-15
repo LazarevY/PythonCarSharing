@@ -91,13 +91,8 @@ def client_autos_for_point_load():
 
     autos = db().execute_query(lambda d: d
                                .query(Auto)
-                               .filter(Auto.status_id == 0)
-                               .join(AutoInOffice,
-                                     and_(
-                                         AutoInOffice.auto_id == Auto.auto_id,
-                                         AutoInOffice.office_id ==
-                                         data['point_id'],
-                                         AutoInOffice.departure_date == None))
+                               .filter(and_(Auto.status_id == 0,
+                                            Auto.current_office_id == data['point_id']))
                                .join(AutoModel, AutoModel.model_id == Auto.model_id)
                                .join(AutoBrand, AutoBrand.brand_id == AutoModel.brand_id)
                                .filter(AutoModel.category_id.in_(client_categories_lst))
