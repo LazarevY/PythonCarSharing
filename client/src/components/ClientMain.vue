@@ -27,6 +27,8 @@
       </div>
     </nav>
 
+    <br>
+
     <main role="main" class="container" v-show="!have_active_contract">
       <b-form>
         <b-form-group

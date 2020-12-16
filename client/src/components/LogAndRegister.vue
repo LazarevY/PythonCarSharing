@@ -269,6 +269,7 @@ export default {
           if (resp.data.logined === false) {
             this.check_login.message = resp.data.message;
             this.check_login.status = false;
+            this.$router.push({name: 'LogAndRegister'})
           } else {
             this.check_login.status = true;
             Vue.$cookies.set('token', resp.data.token)
@@ -279,6 +280,10 @@ export default {
           console.error(error);
         });
     }
+  },
+  created() {
+    if (Vue.$cookies.isKey('token'))
+      this.$router.push({name: 'ClientMain'});
   }
 }
 </script>

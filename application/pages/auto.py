@@ -25,9 +25,18 @@ def service_auto():
     if request.method == "POST":
         post_data = request.get_json()
 
-        auto = Auto(model_id=post_data.get('model_id'), registration_number=post_data.get('registration_number'),
-                    mileage=post_data.get('mileage'), quality=post_data.get('quality'), status_id=0)
+        auto = Auto(model_id=post_data.get('model_id'),
+                    registration_number=post_data.get('registration_number'),
+                    mileage=post_data.get('mileage'),
+                    current_office_id=post_data.get('current_office_id'),
+                    quality=post_data.get('quality'),
+                    status_id=0)
         db().execute_add(auto, True)
+
+        auto_id = get_auto_id(post_data.get('registration_number'))
+        date = datetime.now()
+        aio = AutoInOffice(auto_id=auto_id, office_id=post_data.get('current_office_id'), receipt_date=date)
+        db().execute_add(aio, True)
     elif request.method == 'PUT':
         data = request.get_json()
         db().execute_query(lambda d: d
@@ -74,9 +83,12 @@ def service_autos_get_filtered():
                                    .join(AutoModel, AutoModel.model_id == Auto.model_id)
                                    .join(AutoBrand, AutoBrand.brand_id == AutoModel.brand_id)
                                    .join(BranchOffice, BranchOffice.office_id == Auto.current_office_id)
-                                   .filter(AutoBrand.brand_id != None if data['brand'] is None else AutoBrand.brand_id == data['brand'])
-                                   .filter(AutoModel.model_id != None if data['model'] is None else AutoModel.model_id == data['model'])
-                                   .filter(Auto.registration_number != None if data['number'] is None else Auto.registration_number == data['number'])
+                                   .filter(
+            AutoBrand.brand_id != None if data['brand'] is None else AutoBrand.brand_id == data['brand'])
+                                   .filter(
+            AutoModel.model_id != None if data['model'] is None else AutoModel.model_id == data['model'])
+                                   .filter(
+            Auto.registration_number != None if data['number'] is None else Auto.registration_number == data['number'])
                                    .order_by(AutoBrand.brand_name)
                                    .with_entities(AutoBrand.brand_name,
                                                   AutoModel.model_name,

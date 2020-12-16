@@ -39,7 +39,7 @@
           <h1>Autos</h1>
           <hr>
           <br><br>
-          <button type="button" class="btn btn-success btn-sm" v-b-modal.auto-modal>Add Auto</button>
+          <button type="button" class="btn btn-success btn-sm" @click="initForm" v-b-modal.auto-modal>Add Auto</button>
           <button type="button" class="btn btn-success btn-sm" @click="updateAutos">Reload Autos</button>
 
           <br><br>
@@ -135,6 +135,16 @@
                          placeholder="Select model"
                          aria-required="true">
             </v-selectize>
+
+            <b-form-group label="Location: "
+                          label-for="form-add-location-select">
+              <v-selectize id="form-add-location-select"
+                           :options="change_location_points"
+                           v-model="addAutoForm.current_office_id"
+                           placeholder="Select location"
+                           aria-required="true">
+              </v-selectize>
+            </b-form-group>
           </b-form-group>
           <b-form-group id="form-number-group"
                         label="Number:"
@@ -295,6 +305,7 @@ export default {
       addAutoForm: {
         model_id: 0,
         registration_number: '',
+        current_office_id: null,
         mileage: 0,
         quality: 0,
       },
@@ -359,13 +370,17 @@ export default {
       axios.post(path, payload)
         .then((res) => {
           this.model_options = []
-          res.data.models.forEach(model => {
+          let cur = null;
+          res.data.models.forEach((model) => {
             let mod = {label: model.model_name, code: model.model_id}
-            this.model_options.push(mod)
             if (mod.code === this.editForm.old_model_id) {
-              this.editForm.new_model_id.val(mod);
+              cur = mod;
+              this.model_options.unshift(mod)
             }
+            else
+              this.model_options.push(mod);
           })
+          this.editForm.new_model_id = this.model_options[0];
         })
         .catch((error) => {
           console.error(error);
@@ -420,6 +435,8 @@ export default {
       this.editForm.mileage = auto.mileage;
       this.editForm.quality = auto.quality;
 
+      this.getModelOptions(auto.brand_name)
+
       let path = 'http://localhost:5000/services/auto/autos/location';
 
       let payload = {
@@ -427,11 +444,12 @@ export default {
         current_office_id: auto.current_office_id,
       }
 
-      this.getModelOptions(auto.brand_name)
+      this.editForm.new_office = {label: '', code: auto.current_office_id}
 
       axios.post(path, payload)
         .then((resp) => {
           let locations = [];
+          let cur = null;
           resp.data.locations.forEach((location) => {
             let loc = {
               label: location.office_label,
@@ -439,9 +457,10 @@ export default {
             }
             locations.push(loc);
             if (loc.code === auto.current_office_id) {
-              this.editForm.new_office = loc;
+              cur = loc;
             }
           });
+          this.editForm.new_office = cur;
           this.change_location_points = locations;
         })
         .catch((error) => {
@@ -490,6 +509,7 @@ export default {
       this.addAutoForm.registration_number = null;
       this.addAutoForm.mileage = 1000;
       this.addAutoForm.quality = 50;
+      this.loadPoints();
     },
     onSubmit(evt) {
       evt.preventDefault();
@@ -499,6 +519,7 @@ export default {
         registration_number: this.addAutoForm.registration_number,
         mileage: this.addAutoForm.mileage,
         quality: this.addAutoForm.quality,
+        current_office_id: this.addAutoForm.current_office_id.code
       };
       this.addAuto(payload);
       this.initForm();
@@ -523,6 +544,28 @@ export default {
         quality: this.editForm.quality,
       };
       this.updateAuto(payload);
+    },
+    loadPoints() {
+      let path = 'http://localhost:5000/services/auto/autos/location';
+
+      let payload = {}
+
+      axios.post(path, payload)
+        .then((resp) => {
+          let locations = [];
+          resp.data.locations.forEach((location) => {
+            let loc = {
+              label: location.office_label,
+              code: location.office_id,
+            }
+            locations.push(loc);
+          });
+          this.change_location_points = locations;
+        })
+        .catch((error) => {
+          // eslint-отключение следующей строки
+          console.error(error);
+        });
     },
     onReset(evt) {
       evt.preventDefault();
