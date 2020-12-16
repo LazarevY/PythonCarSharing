@@ -103,6 +103,9 @@ def end_client_rent():
 
         rent_price = model_price.price * sum(t['duration']
                                              for t in filter(lambda item: item['state_name'] == 'active', hist))
+
+        rent_price += int(0.2 * int(model_price.price) * sum(
+            t['duration'] for t in filter(lambda item: item['state_name'] == 'wait', hist)))
         contract_data = db().execute_query(lambda d: d
                                            .query(RentContract)
                                            .filter(RentContract.contract_id == data['contract_id'])

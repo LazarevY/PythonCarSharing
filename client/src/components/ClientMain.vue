@@ -219,7 +219,7 @@ export default {
         headers: {Authorization: "Bearer " + Vue.$cookies.get('token')}
       })
         .then((resp) => {
-
+            this.created();
         })
         .catch((error) => {
         });
