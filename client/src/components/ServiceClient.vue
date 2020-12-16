@@ -74,7 +74,45 @@
         </tr>
 
       </table>
+      <button v-b-modal.violationAddId @click="load_violations_data" class="btn btn-danger btn-lg">
+        Add Violation
+      </button>
     </div>
+
+    <b-modal ref="violationAdd"
+             id="violationAddId"
+             hide-footer>
+      <b-form @submit="onSubmit">
+        <b-form-group label="Choose rent">
+        <v-selectize
+          :options="contracts"
+          v-model="violation_add_form.contract_id">
+
+        </v-selectize>
+      </b-form-group>
+
+      <b-form-group label="Choose violation">
+        <v-selectize
+          :options="violations"
+          v-model="violation_add_form.violation_id">
+
+        </v-selectize>
+      </b-form-group>
+
+      <b-form-group label="Fine">
+        <b-input v-model="violation_add_form.price" type="number">
+        </b-input>
+      </b-form-group>
+
+      <b-form-group label="Note">
+        <b-input v-model="violation_add_form.note" type="text">
+        </b-input>
+      </b-form-group>
+
+
+      <b-button type="submit" :disabled="checkViolationFilled()" variant="primary">Add</b-button>
+      </b-form>
+    </b-modal>
 
 
   </div>
@@ -85,6 +123,7 @@
 import axios from "axios";
 import 'selectize/dist/css/selectize.default.css' // This is required, we use the same css as selectize.js
 import VSelectize from '@isneezy/vue-selectize'
+import {minValue, required} from 'vuelidate/lib/validators'
 
 export default {
   name: "ServiceClient",
@@ -96,9 +135,24 @@ export default {
       client_load_form: {
         phone: '',
       },
+      contracts: [],
+      violations: [],
+      violation_add_form: {
+        contract_id: null,
+        violation_id: null,
+        note: '',
+        price: 0,
+      }
     }
   },
-  validations: {},
+  validations: {
+    violation_add_form: {
+      price: {
+        required,
+        minValue: minValue(0),
+      }
+    }
+  },
   methods: {
     validateState(item) {
       const {$dirty, $error} = item
@@ -119,6 +173,9 @@ export default {
           console.log(error);
         });
     },
+    checkViolationFilled() {
+      return this.violation_add_form.contract_id === null && this.violation_add_form.violation_id === null;
+    },
     load_clients_list() {
       const path = 'http://localhost:5000/services/client'
       let clients = [];
@@ -133,6 +190,57 @@ export default {
           console.log(error);
         });
     },
+    load_violations_data() {
+      const path = 'http://localhost:5000/services/client/violations';
+      const payload = {
+        client_phone: this.client_data.phone,
+      };
+
+      this.violation_add_form.price = 0;
+      this.violation_add_form.note = '';
+      this.violation_add_form.violation_id = null;
+      this.violation_add_form.contract_id = null;
+
+      axios.post(path, payload)
+        .then((resp) => {
+          this.violations = []
+          resp.data.violations.forEach((violation) => {
+            this.violations.push({
+              label: violation.violation_desc,
+              code: violation.violation_id
+            })
+          })
+          this.contracts = []
+          resp.data.contracts.forEach((contract) => {
+            this.contracts.push({
+              label: contract.contract_date,
+              code: contract.contract_id
+            })
+          })
+        })
+        .catch((error) => {
+          console.log(error);
+        });
+    },
+    onSubmit() {
+      const path = 'http://localhost:5000/services/client/violations/add';
+      this.$refs.violationAdd.hide();
+      const payload = {
+        client_phone: this.client_data.phone,
+        contract_id: this.violation_add_form.contract_id.code,
+        violation_id: this.violation_add_form.violation_id.code,
+        price: this.violation_add_form.price,
+        note: this.violation_add_form.note,
+      };
+
+      axios.post(path, payload)
+        .then((resp) => {
+
+        })
+        .catch((error) => {
+          console.log(error);
+        });
+    },
     updateClientCategories() {
       const path = 'http://localhost:5000/services/client/categories';
       const payload = {
@@ -142,7 +250,7 @@ export default {
 
       axios.post(path, payload)
         .then((resp) => {
-            this.load_client_data(this.client_load_form.phone.code)
+          this.load_client_data(this.client_load_form.phone.code)
         })
         .catch((error) => {
           console.log(error);

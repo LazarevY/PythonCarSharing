@@ -39,6 +39,7 @@ def client_statistic_load():
                                  .join(AutoBrand, AutoModel.brand_id == AutoBrand.brand_id)
                                  .with_entities(AutoBrand.brand_name, AutoModel.model_name, rents)
                                  .group_by(AutoBrand.brand_name, AutoModel.model_name)
+                                 .order_by(desc(rents))
                                  .limit(3)
                                  .all())
         response_object['top_models'] = \
@@ -98,7 +99,8 @@ def client_statistic_load():
                                                        AutoModel.model_name,
                                                        Auto.registration_number,
                                                        RentContract.rent_begin_date,
-                                                       RentContract.rent_end_date)
+                                                       RentContract.rent_end_date,
+                                                       RentContract.rent_price)
                                         .order_by(RentContract.rent_begin_date)
                                         .all())
 
@@ -109,6 +111,7 @@ def client_statistic_load():
                     'brand_name': t.brand_name,
                     'model_name': t.model_name,
                     'number': t.registration_number,
+                    'price': int(t.rent_price),
                     'rent_begin_date': str(t.rent_begin_date),
                     'rent_end_date': str(t.rent_end_date)
                 }

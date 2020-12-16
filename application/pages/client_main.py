@@ -4,7 +4,7 @@ from flask import jsonify, request
 from flask_jwt_extended import (
     jwt_required, get_jwt_identity
 )
-from sqlalchemy import and_, desc
+from sqlalchemy import and_, desc, func
 
 from app_context import app, db
 from application.database.database_utils import get_client_id, get_auto_id, get_auto_status_id_by_name, \
@@ -68,6 +68,27 @@ def client_main_load():
         }
 
     response_object['points'] = [{'code': p.office_id, 'label': p.office_address} for p in points]
+
+    rents = func.count(RentContract.contract_id)
+    top = db().execute_query(lambda d: d
+                             .query(Auto)
+                             .join(RentContract, RentContract.auto_id == Auto.auto_id)
+                             .join(AutoModel, AutoModel.model_id == Auto.model_id)
+                             .join(AutoBrand, AutoModel.brand_id == AutoBrand.brand_id)
+                             .with_entities(AutoBrand.brand_name, AutoModel.model_name, rents)
+                             .group_by(AutoBrand.brand_name, AutoModel.model_name)
+                             .order_by(desc(rents))
+                             .limit(3)
+                             .all())
+    response_object['top_models'] = \
+        [
+            {
+                'brand_name': t.brand_name,
+                'model_name': t.model_name,
+                'rents': t[2]
+            }
+            for t in top
+        ]
 
     return jsonify(response_object)
 

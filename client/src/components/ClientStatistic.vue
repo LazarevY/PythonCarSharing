@@ -88,6 +88,10 @@
             <td>{{ rent_data.number }}</td>
           </tr>
           <tr>
+            <th>Price</th>
+            <td>{{ rent_data.price }}</td>
+          </tr>
+          <tr>
             <th>Rent begin</th>
             <td>{{ rent_data.rent_begin_date }}</td>
           </tr>

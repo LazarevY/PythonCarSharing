@@ -27,6 +27,20 @@
       </div>
     </nav>
 
+
+    <br>
+    <div class="container">
+      <table class="table table-bordered">
+        <tr>
+          <th>Model</th>
+          <th>Rents</th>
+        </tr>
+        <tr v-for="(model, index) in top_rents" :key="index">
+          <td>{{ model.brand_name }} {{ model.model_name }}</td>
+          <td>{{ model.rents }}</td>
+        </tr>
+      </table>
+    </div>
     <br>
 
     <main role="main" class="container" v-show="!have_active_contract">
@@ -158,7 +172,8 @@ export default {
         registration_number: null,
         model_name: null,
         brand_name: null
-      }
+      },
+      top_rents: [],
 
     }
   },
@@ -235,6 +250,7 @@ export default {
           this.clientData.name = resp.data.userdata.name;
           this.clientData.phone = resp.data.userdata.phone;
           this.have_active_contract = resp.data.isActiveContract;
+          this.top_rents = resp.data.top_models;
           if (resp.data.isActiveContract) {
             this.rent_data = resp.data.rent_data;
           }

@@ -21,6 +21,7 @@ from application.database.modeles.client import Client
 from application.database.modeles.client_category import ClientCategory
 from application.database.modeles.drive_category import DriveCategory
 from application.database.modeles.violation import Violation
+from application.database.modeles.violation_type import ViolationType
 
 a = app()
 
@@ -98,4 +99,54 @@ def service_client_update_categories():
                 category = ClientCategory(client_id=client_id, category_id=get_category_id(name))
                 db().execute_add(category)
         db().commit_session()
+    return jsonify(response_object)
+
+
+@a.route('/services/client/violations', methods=['POST'])
+def service_client_load_violation_data():
+    response_object = {'status': 'success'}
+    if request.method == 'POST':
+        data = request.get_json()
+
+        violations = db().execute_query(lambda d: d
+                                        .query(ViolationType)
+                                        .all())
+        contract_dates = db().execute_query(lambda d: d
+                                            .query(RentContract)
+                                            .join(Client, and_(Client.client_id == RentContract.client_id,
+                                                               Client.client_phone == data['client_phone']))
+                                            .with_entities(RentContract.contract_id, RentContract.rent_begin_date)
+                                            .all())
+        response_object['violations'] = \
+            [
+                {
+                    'violation_id': v.violation_id,
+                    'violation_type': v.violation_type,
+                    'violation_desc': v.desc
+                }
+                for v in violations
+            ]
+
+        response_object['contracts'] = \
+            [
+                {
+                    'contract_id': r.contract_id,
+                    'contract_date': r.rent_begin_date,
+                }
+                for r in contract_dates
+            ]
+
+    return jsonify(response_object)
+
+
+@a.route('/services/client/violations/add', methods=['POST'])
+def service_client_add_violation():
+    response_object = {'status': 'success'}
+    if request.method == 'POST':
+        data = request.get_json()
+        violation = Violation(contract_id=data['contract_id'],
+                              violation_id=data['violation_id'],
+                              fine=data['price'],
+                              note=data['note'])
+        db().execute_add(violation, True)
     return jsonify(response_object)
