@@ -223,6 +223,8 @@ export default {
         })
         .catch((error) => {
         });
+
+      setTimeout(this.created, 1000);
     },
     onRentReset() {
 
